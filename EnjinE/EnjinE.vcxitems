@@ -15,10 +15,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Player.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\RenderScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Sprite.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\World.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\defines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\game\game.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sys\render.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sys\events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\physics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\creator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\includes.h" />
@@ -26,6 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)core\game\game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sys\render.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sys\events.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\physics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\creator.cpp" />
   </ItemGroup>

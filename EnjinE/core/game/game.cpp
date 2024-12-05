@@ -1,8 +1,9 @@
 #include "game.h"
 
+#include "sys/events.h"
+#include "sys/render.h"
 #include "sys/creator.h"
 #include "sys/physics.h"
-
 
 game::game() {
 }
@@ -13,37 +14,18 @@ game::~game()
 
 int game::run()
 {
-    sf::Clock deltaClock;
-    RenderWindow* window = creator::makeWindow(reg);
+    RenderScene rs = creator::makeRenderScene(reg);
 
     creator::makeWorld(reg);
     creator::makePlayer(reg);
     
     // Главный цикл
-    while (window->isOpen()) {
-        Event event;
-        while (const auto eventbool = window->pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(*window, event);
-            
-            if (event.type == Event::Closed) {
-                window->close();
-            }
-        }
+    while (rs.rw->isOpen()) {
+        events::tick(reg, rs.rw);
 
-        ImGui::SFML::Update(*window, deltaClock.restart());
+        physics::step(reg);
 
-        ImGui::ShowDemoWindow();
-
-        ImGui::Begin("Hello, world!");
-        ImGui::Button("Look at this pretty button");
-        ImGui::End();
-
-        window->clear();
-
-
-
-        ImGui::SFML::Render(*window);
-        window->display();
+        render::frame(reg, rs);
     }
 
     return 0;

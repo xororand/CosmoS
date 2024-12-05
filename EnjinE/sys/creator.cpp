@@ -8,16 +8,19 @@
 #include "comp/World.h"
 
 
-RenderWindow* creator::makeWindow(entt::registry&reg)
-{
-	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 600 }), "CosmoS");
+RenderScene creator::makeRenderScene(entt::registry&reg) {
+	RenderScene rs;
+
+	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 800 }), "CosmoS");
 	rw->setFramerateLimit(60);
+	rs.rw = rw;
+	
 	ImGui::SFML::Init(*rw);
 
 	const auto e = reg.create();
-	reg.emplace<RenderWindow*>(e, rw);
+	reg.emplace<RenderScene>(e, rs);
 
-	return rw;
+	return rs;
 }
 
 void creator::makeWorld(entt::registry&reg) {
