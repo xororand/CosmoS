@@ -1,13 +1,26 @@
-#include "spawner.h"
+#include "creator.h"
 
 #include <entt/entity/registry.hpp>
 #include "box2d/box2d.h"
+#include "SFML/Graphics.hpp"
 
 #include "comp/Player.h"
 #include "comp/World.h"
 
 
-void spawner::makeWorld(entt::registry&reg) {
+RenderWindow* creator::makeWindow(entt::registry&reg)
+{
+	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 600 }), "CosmoS");
+	rw->setFramerateLimit(60);
+	ImGui::SFML::Init(*rw);
+
+	const auto e = reg.create();
+	reg.emplace<RenderWindow*>(e, rw);
+
+	return rw;
+}
+
+void creator::makeWorld(entt::registry&reg) {
 	const auto e = reg.create();
 	
 	World world;
@@ -23,7 +36,7 @@ void spawner::makeWorld(entt::registry&reg) {
 	reg.emplace<b2WorldId>(e, wid);
 }
 
-entt::entity spawner::makePlayer(entt::registry&reg) {
+entt::entity creator::makePlayer(entt::registry&reg) {
 	// »щем первый попавшийс€ мир
 	const auto view = reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;

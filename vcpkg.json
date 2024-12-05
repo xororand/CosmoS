@@ -1,7 +1,6 @@
 {
   "dependencies": [
     "entt",
-    "imgui",
-    "glfw3"
+    "imgui-sfml"
   ]
 }

@@ -19,25 +19,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\World.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\defines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\game\game.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)core\grafics\grafics.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)core\grafics\imgui_impl_glfw.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)core\grafics\imgui_impl_opengl3.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)core\grafics\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)sys\glfw\glfw_render.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)sys\glfw\glfw_events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\physics.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)sys\spawner.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sys\creator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\includes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)core\game\game.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)core\grafics\grafics.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)core\grafics\imgui_impl_glfw.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)core\grafics\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)sys\glfw\glfw_render.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)sys\glfw\glfw_events.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\physics.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)sys\spawner.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sys\creator.cpp" />
   </ItemGroup>
 </Project>
