@@ -1,3 +1,6 @@
 #pragma once
 
-struct World {};
+struct World {
+	float timeStep;
+	int SubStepCount;
+};
