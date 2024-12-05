@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+#vcpkg installed
+vcpkg_installed/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

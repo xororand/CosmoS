@@ -1,0 +1,7 @@
+{
+  "dependencies": [
+    "entt",
+    "imgui",
+    "glfw3"
+  ]
+}
