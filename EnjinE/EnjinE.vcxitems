@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{b509e47c-c25b-4fcc-8df2-5f44a399c16b}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Player.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Sprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\World.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)core\defines.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)core\game\game.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)core\game\spawner.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)core\includes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)core\game\game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)core\game\spawner.cpp" />
+  </ItemGroup>
+</Project>
