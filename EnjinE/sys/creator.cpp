@@ -6,7 +6,8 @@
 
 #include "comp/Player.h"
 #include "comp/World.h"
-
+#include <comp/SpriteComp.h>
+#include <comp/Controllable.h>
 
 RenderScene creator::makeRenderScene(entt::registry&reg) {
 	RenderScene rs;
@@ -21,6 +22,16 @@ RenderScene creator::makeRenderScene(entt::registry&reg) {
 	reg.emplace<RenderScene>(e, rs);
 
 	return rs;
+}
+
+TextureManager creator::makeTextureManager(entt::registry&reg) {
+	TextureManager tm = TextureManager();
+	tm.loadTexturesFromRootResources();
+
+	const auto e = reg.create();
+	reg.emplace<TextureManager>(e, tm);
+
+	return tm;
 }
 
 void creator::makeWorld(entt::registry&reg) {
@@ -63,7 +74,12 @@ entt::entity creator::makePlayer(entt::registry&reg) {
 	cap.radius = 0.25f;
 	b2ShapeId sid = b2CreateCapsuleShape(bid, &sdef, &cap);
 
+	SpriteComp sprite_c;
+	sprite_c.id = 2;
+
 	reg.emplace<Player>(e);
+	reg.emplace<Controllable>(e);
+	reg.emplace<SpriteComp>(e, sprite_c);
 	reg.emplace<b2BodyId>(e, bid);
 
 	return e;

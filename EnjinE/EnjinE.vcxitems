@@ -14,24 +14,33 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Controllable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\RenderScene.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Sprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\SpriteComp.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\TextureManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\World.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\defines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\game\game.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sys\input_controller.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\render.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\physics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\creator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)core\includes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\hashes\sha256.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\Utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)comp\TextureManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)core\game\game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sys\input_controller.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\render.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\events.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\physics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\creator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\hashes\sha256.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\Utils.cpp" />
   </ItemGroup>
 </Project>
