@@ -6,7 +6,7 @@
 class render
 {
 public:
-	static void frame(entt::registry&, RenderScene rs);
+	static void frame(entt::registry&, RenderScene& rs);
 private:
 	static void render_physics(entt::registry&, RenderScene rs);
 	static void set_controllable_view(entt::registry&, RenderScene rs);

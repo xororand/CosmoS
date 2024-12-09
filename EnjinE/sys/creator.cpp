@@ -10,6 +10,8 @@
 #include <comp/Controllable.h>
 #include <comp/AI.h>
 #include <comp/OreHolder.h>
+#include <comp/AncientDrone.h>
+#include <comp/AncientDroneStation.h>
 
 RenderScene creator::makeRenderScene(entt::registry&reg) {
 	RenderScene rs;
@@ -59,7 +61,7 @@ void creator::makeWorld(entt::registry&reg) {
 	reg.emplace<b2WorldId>(e, wid);
 }
 
-entt::entity creator::makePlayer(entt::registry&reg) {
+entt::entity creator::makePlayer(entt::registry&reg, b2Vec2 pos) {
 	const auto tm = reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
 	TextureManager texmngr = reg.get<TextureManager>(tm.front());
@@ -74,7 +76,7 @@ entt::entity creator::makePlayer(entt::registry&reg) {
 	// Создаем тело игрока
 	b2BodyDef bdef = b2DefaultBodyDef();
 	bdef.type = b2_dynamicBody;
-	bdef.position = b2Vec2_zero;
+	bdef.position = pos;
 	bdef.fixedRotation = true;
 	b2BodyId bid = b2CreateBody(wid, &bdef);
 
@@ -98,7 +100,8 @@ entt::entity creator::makePlayer(entt::registry&reg) {
 
 	return e;
 }
-entt::entity creator::makeAncientMiningDrone(entt::registry&reg) {
+
+entt::entity creator::makeAncientMiningDrone(entt::registry&reg, entt::entity station, b2Vec2 pos) {
 	const auto tm = reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
 	TextureManager texmngr = reg.get<TextureManager>(tm.front());
@@ -113,7 +116,7 @@ entt::entity creator::makeAncientMiningDrone(entt::registry&reg) {
 	// Создаем тело
 	b2BodyDef bdef = b2DefaultBodyDef();
 	bdef.type = b2_dynamicBody;
-	bdef.position = b2Vec2_zero;
+	bdef.position = pos;
 	bdef.fixedRotation = true;
 	b2BodyId bid = b2CreateBody(wid, &bdef);
 
@@ -130,21 +133,19 @@ entt::entity creator::makeAncientMiningDrone(entt::registry&reg) {
 	SpriteComp sprite_c;
 	sprite_c.id = texmngr.getIDbyName(L"a-drone");
 
+	AncientMiningDrone amd;
+	amd.station = station;
+
 	reg.emplace<AI>(e);
-	reg.emplace<AncientMiningDrone>(e);
+	reg.emplace<AncientDrone>(e);
+	reg.emplace<AncientMiningDrone>(e, amd);
 	reg.emplace<OreHolder>(e);
 	reg.emplace<SpriteComp>(e, sprite_c);
 	reg.emplace<b2BodyId>(e, bid);
 
 	return e;
 }
-
-entt::entity creator::makeAncientMiningDroneStation(entt::registry&)
-{
-	return entt::entity();
-}
-
-entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType type)
+entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 pos)
 {
 	const auto tm = reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
@@ -160,7 +161,74 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType ty
 	// Создаем тело
 	b2BodyDef bdef = b2DefaultBodyDef();
 	bdef.type = b2_dynamicBody;
-	bdef.position = b2Vec2_zero;
+	bdef.position = pos;
+	float degree = (float)(rand() % 360) - 180.0f;
+	bdef.rotation = b2MakeRot(degree * (b2_pi / 180));
+
+	b2BodyId bid = b2CreateBody(wid, &bdef);
+
+	// Создаем коллизию
+	b2ShapeDef sdef = b2DefaultShapeDef();
+	// Задаем коллизии форму капсулы
+
+	b2Circle cir;
+	cir.center = b2Vec2_zero;
+	cir.radius = 52.0f;
+
+	b2ShapeId sid = b2CreateCircleShape(bid, &sdef, &cir);
+
+	// Выбор текстуры
+	SpriteComp sprite_c;
+	sprite_c.id = texmngr.getIDbyName(L"asteroid");
+
+	// Вмещение начальной руды
+	OreHolder ore_h;
+
+	b2MassData mass_data;
+	mass_data.center = b2Vec2_zero;
+	mass_data.mass = 10 * STANDART_ORE_COUNT; // 10 кг - 1 кусок руды
+	mass_data.rotationalInertia = 0.0f;
+
+	b2Body_SetMassData(bid, mass_data);
+
+	reg.emplace<AncientDroneStation>(e);
+	reg.emplace<OreHolder>(e, ore_h);
+	reg.emplace<SpriteComp>(e, sprite_c);
+	reg.emplace<b2BodyId>(e, bid);
+	return e;
+}
+entt::entity creator::makeComposition_MiningAntientDrones(entt::registry& reg, b2Vec2 pos) {
+	entt::entity ds_e = makeAncientMiningDroneStation(reg, pos);
+	if (ds_e == entt::null) return entt::null;
+
+	AncientDroneStation* station = &reg.get<AncientDroneStation>(ds_e);
+
+	// спавним дронов
+	for (int i = 0; i < rand() % 10 + 1; i++) { 
+		const auto e = makeAncientMiningDrone(reg, ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		station->drones.push_back(e);
+	}
+
+	return ds_e;
+}
+
+entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType type, b2Vec2 pos)
+{
+	const auto tm = reg.view<TextureManager>();
+	if (tm.begin() == tm.end()) return entt::null;
+	TextureManager texmngr = reg.get<TextureManager>(tm.front());
+
+	// Ищем первый попавшийся мир
+	const auto view = reg.view<World, b2WorldId>();
+	if (view.begin() == view.end()) return entt::null;
+	b2WorldId wid = view.get<b2WorldId>(view.front());
+
+	const auto e = reg.create();
+
+	// Создаем тело
+	b2BodyDef bdef = b2DefaultBodyDef();
+	bdef.type = b2_dynamicBody;
+	bdef.position = pos;
 	float degree = (float)(rand() % 360) - 180.0f;
 	bdef.rotation = b2MakeRot(degree * (b2_pi / 180) );
 
@@ -218,13 +286,15 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType ty
 
 	b2MassData mass_data;
 	mass_data.center = b2Vec2_zero;
-	mass_data.mass = 10 * STANDART_ORE_COUNT; // 10 кг - 1 кусок руды
+	mass_data.mass = 100 * STANDART_ORE_COUNT; // 100 кг - 1 кусок руды
 	mass_data.rotationalInertia = 0.0f;
 
 	b2Body_SetMassData(bid, mass_data);
 
+	reg.emplace<Asteroid>(e, aster);
 	reg.emplace<OreHolder>(e, ore_h);
 	reg.emplace<SpriteComp>(e, sprite_c);
 	reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
+

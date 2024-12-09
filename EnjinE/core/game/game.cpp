@@ -4,6 +4,7 @@
 #include "sys/render.h"
 #include "sys/creator.h"
 #include "sys/physics.h"
+#include "sys/logics.h"
 #include "sys/input_controller.h"
 
 game::game() {
@@ -24,10 +25,8 @@ int game::run()
     creator::makeWorld(reg);
 
     creator::makePlayer(reg);
-    creator::makeAncientMiningDrone(reg);
-    creator::makeAsteroid(reg, Asteroid::AsteroidType::IRON);
-    creator::makeAsteroid(reg, Asteroid::AsteroidType::URANIUM);
-    creator::makeAsteroid(reg, Asteroid::AsteroidType::IRON);
+
+    creator::makeComposition_MiningAntientDrones(reg, b2Vec2(64.0f, 0.0f));
     
     // Главный цикл
     rs.rw->setVerticalSyncEnabled(true);
@@ -36,6 +35,7 @@ int game::run()
         input_controller::tick(reg);
 
         physics::step(reg);
+        logics::step(reg);
 
         render::frame(reg, rs);
     }

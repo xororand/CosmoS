@@ -24,6 +24,14 @@ size_t TextureManager::getIDbyName(std::wstring name) {
 
     return id;
 }
+std::wstring TextureManager::getNamebyID(size_t id)
+{
+    std::wstring name = L"no_texture";
+
+    if (id < m_order.size()) name = m_order[id];
+
+    return name;
+}
 sf::Texture* TextureManager::getTexture(int index)
 {
     if (m_order.size() == index || index > m_order.size()) return nullptr;

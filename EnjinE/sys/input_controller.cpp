@@ -16,12 +16,10 @@ void input_controller::keyboard_inputs(entt::registry&reg)
 	const auto view = reg.view<Controllable>();
 	if (view.begin() == view.end()) return;
 
-	Controllable ctrlable = reg.get<Controllable>(view.front());
+	Controllable* ctrlable = &reg.get<Controllable>(view.front());
 
-	ctrlable.w = ImGui::IsKeyPressed(ImGuiKey_W);
-	ctrlable.a = ImGui::IsKeyPressed(ImGuiKey_A);
-	ctrlable.s = ImGui::IsKeyPressed(ImGuiKey_S);
-	ctrlable.d = ImGui::IsKeyPressed(ImGuiKey_D);
-
-	reg.replace<Controllable>(view.front(), ctrlable);
+	ctrlable->w = ImGui::IsKeyDown(ImGuiKey_W);
+	ctrlable->a = ImGui::IsKeyDown(ImGuiKey_A);
+	ctrlable->s = ImGui::IsKeyDown(ImGuiKey_S);
+	ctrlable->d = ImGui::IsKeyDown(ImGuiKey_D);
 }

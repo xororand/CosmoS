@@ -21,8 +21,9 @@ private:
 public:
 	TextureManager();
 
-	sf::Texture* getTexture(std::wstring name);
-	size_t getIDbyName(std::wstring name);
+	sf::Texture* getTexture(std::wstring);
+	size_t getIDbyName(std::wstring);
+	std::wstring getNamebyID(size_t);
 	// Get texutre by index in map, or return null
 	sf::Texture* getTexture(int index);
 
