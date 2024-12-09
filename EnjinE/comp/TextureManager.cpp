@@ -13,6 +13,17 @@ sf::Texture* TextureManager::getTexture(std::wstring name)
         return NULL;
     }
 }
+size_t TextureManager::getIDbyName(std::wstring name) {
+    size_t id = no_texture_id;
+
+    auto it = std::find(m_order.begin(), m_order.end(), name);
+
+    if ( it != m_order.end() ) {
+        id = std::distance(m_order.begin(), it);
+    }
+
+    return id;
+}
 sf::Texture* TextureManager::getTexture(int index)
 {
     if (m_order.size() == index || index > m_order.size()) return nullptr;
@@ -40,11 +51,14 @@ void TextureManager::loadTexturesFromRootResources(fs::path dir)
             outfilename_str = Utils::string::replace(outfilename_str, '\\', '_');
 
             sf::Texture* texture = new sf::Texture();
-
+            
             if (texture->loadFromFile(entry.path().string()))
             {
+                texture->setRepeated(false);
+                texture->setSmooth(false);
                 m_textures[outfilename_str] = texture;
                 m_order.push_back(outfilename_str);
+                if (outfilename_str == L"no_texture") no_texture_id = m_order.size();
             }
             else
             {

@@ -8,6 +8,6 @@ public:
 
 private:
 	static void stepWorld(entt::registry&);
-	static void stepControllable(entt::registry&);
+	static void stepBodys(entt::registry&);
 };
 

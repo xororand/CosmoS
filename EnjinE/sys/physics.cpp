@@ -2,13 +2,15 @@
 
 #include <entt/entity/registry.hpp>
 #include "box2d/box2d.h"
+#include "SFML/Graphics.hpp"
 
 #include "comp/World.h"
 #include "comp/Controllable.h"
+#include <comp/RenderScene.h>
 
 void physics::step(entt::registry&reg) {
 	stepWorld(reg);
-	stepControllable(reg);
+	stepBodys(reg);
 }
 
 void physics::stepWorld(entt::registry&reg)
@@ -23,20 +25,26 @@ void physics::stepWorld(entt::registry&reg)
 	b2World_Step(wid, world.timeStep, world.SubStepCount);
 }
 
-void physics::stepControllable(entt::registry&reg) {
-	// »щем первый попавшийс€ контролируемый ентити
-	const auto view = reg.view<Controllable, b2BodyId>();
-	if (view.begin() == view.end()) return;
+void physics::stepBodys(entt::registry&reg)
+{
+	const auto view = reg.view<b2BodyId>();
+	for (const auto e : view) {
+		b2Vec2 vdelta = b2Vec2_zero;
+		b2BodyId bid = view.get<b2BodyId>(e);
 
-	Controllable ctrla = view.get<Controllable>(view.front());
-	b2BodyId bid = view.get<b2BodyId>(view.front());
+		if (auto ctrla = reg.try_get<Controllable>(e); ctrla) {
+			const float speed = 10000.0f;
+			if (ctrla->w) vdelta.y -= 1.0f * speed;
+			if (ctrla->s) vdelta.y += 1.0f * speed;
+			if (ctrla->a) vdelta.x -= 1.0f * speed;
+			if (ctrla->d) vdelta.x += 1.0f * speed;
+		}
 
-	b2Vec2 vdelta = b2Vec2_zero;
-	if (ctrla.w) vdelta.y += 1.0f;
-	if (ctrla.s) vdelta.y -= 1.0f;
-	if (ctrla.a) vdelta.x -= 1.0f;
-	if (ctrla.d) vdelta.x += 1.0f;
-
-	b2Vec2 vel = b2Body_GetLinearVelocity(bid);
-	b2Body_SetLinearVelocity(bid, vel + vdelta);
+		if (vdelta != b2Vec2_zero)
+			b2Body_ApplyForce(bid, vdelta, b2Body_GetWorldPoint(bid, b2Body_GetPosition(bid)), true);
+		else {
+			b2Vec2 vel = b2Body_GetLinearVelocity(bid);
+			b2Body_SetLinearVelocity(bid, b2Vec2(vel.x * 0.99f, vel.y * 0.99f));
+		}
+	}
 }

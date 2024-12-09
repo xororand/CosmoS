@@ -14,7 +14,11 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Asteroid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Controllable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\Ore.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\OreHolder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\RenderScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\SpriteComp.h" />
