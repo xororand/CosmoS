@@ -54,7 +54,9 @@ void render::render_physics(entt::registry&reg, RenderScene rs) {
         SpriteComp sprite_c = reg.get<SpriteComp>(e);
         b2BodyId bid = reg.get<b2BodyId>(e);
 
-        b2Vec2 pos = b2Body_GetPosition(bid);
+        b2Vec2 b2pos = b2Body_GetPosition(bid);
+        Vector2f pos = Vector2f(b2pos.x, b2pos.y);
+
         b2Rot rot = b2Body_GetRotation(bid);
         b2Vec2 vel = b2Body_GetLinearVelocity(bid);
 
@@ -81,7 +83,7 @@ void render::render_physics(entt::registry&reg, RenderScene rs) {
 
         Sprite sprite;
         sprite.setTexture(*texture);
-        sprite.setPosition(Vector2f(pos.x, pos.y));
+        sprite.setPosition(pos);
         sprite.setRotation(angle);
         sprite.setOrigin(Vector2f(texture->getSize().x / 2.0f, texture->getSize().y / 2.0f));
         rs.rw->draw(sprite);
@@ -97,27 +99,29 @@ void render::render_physics(entt::registry&reg, RenderScene rs) {
             };
             rs.rw->draw(line, 8, sf::Lines);
 
-            Text position = Text(std::format("p:{:.4f},{:.4f}", pos.x, pos.y), rs.mfont, 24);
-            Text rotation = Text(std::format("c:{:.4f},s:{:.4f}", rot.c, rot.s), rs.mfont, 24);
-            Text velocity = Text(std::format("vel:{:.4f},{:.4f}", vel.x, vel.y), rs.mfont, 24);
-            Text n_textur = Text(std::format(L"tex:{}", texmngr.getNamebyID(sprite_c.id)), rs.mfont, 24);
+            Text text_position = Text(std::format("p:\t{:.4f},{:.4f}", pos.x, pos.y), rs.mfont, 24);
+            Text text_rotation = Text(std::format("r:\t{:.4f},s:{:.4f}", rot.c, rot.s), rs.mfont, 24);
+            Text text_velocity = Text(std::format("vel:\t{:.4f},{:.4f}", vel.x, vel.y), rs.mfont, 24);
+            Text text_n_textur = Text(std::format(L"tex:\t{}", texmngr.getNamebyID(sprite_c.id)), rs.mfont, 24);
 
-            const float text_scale = 0.15f;
+            const float text_scale = 0.2f;
+            const Vector2f text_padding = Vector2f(2.5f, 0.0f);
+            text_position.setScale(Vector2f(text_scale, text_scale));
+            text_rotation.setScale(Vector2f(text_scale, text_scale));
+            text_velocity.setScale(Vector2f(text_scale, text_scale));
+            text_n_textur.setScale(Vector2f(text_scale, text_scale));
 
-            position.setScale(Vector2f(text_scale, text_scale));
-            rotation.setScale(Vector2f(text_scale, text_scale));
-            velocity.setScale(Vector2f(text_scale, text_scale));
-            n_textur.setScale(Vector2f(text_scale, text_scale));
+            pos += text_padding;
 
-            position.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size));
-            rotation.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 5));
-            velocity.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 10));
-            n_textur.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 15));
+            text_position.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size));
+            text_rotation.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 5));
+            text_velocity.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 10));
+            text_n_textur.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 15));
 
-            rs.rw->draw(position);
-            rs.rw->draw(rotation);
-            rs.rw->draw(velocity);
-            rs.rw->draw(n_textur);
+            rs.rw->draw(text_position);
+            rs.rw->draw(text_rotation);
+            rs.rw->draw(text_velocity);
+            rs.rw->draw(text_n_textur);
         }
     }
 }

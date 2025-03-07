@@ -1,7 +1,7 @@
 #pragma once
 #include "core/includes.h"
 
-class events
+class gui_events
 {
 public:
 	static void tick(entt::registry&, RenderWindow*);

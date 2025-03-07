@@ -8,10 +8,10 @@
 #include "comp/World.h"
 #include <comp/SpriteComp.h>
 #include <comp/Controllable.h>
-#include <comp/AI.h>
-#include <comp/OreHolder.h>
-#include <comp/AncientDrone.h>
-#include <comp/AncientDroneStation.h>
+#include <comp/drons/AI.h>
+#include <comp/holders/OreHolder.h>
+#include <comp/drons/space/AncientDrone.h>
+#include <comp/drons/space/AncientDroneStation.h>
 
 RenderScene creator::makeRenderScene(entt::registry&reg) {
 	RenderScene rs;
@@ -212,7 +212,7 @@ entt::entity creator::makeComposition_MiningAntientDrones(entt::registry& reg, b
 	return ds_e;
 }
 
-entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType type, b2Vec2 pos)
+entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2 pos)
 {
 	const auto tm = reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
@@ -249,39 +249,17 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Asteroid::AsteroidType ty
 
 	// Выбор текстуры
 	SpriteComp sprite_c;
-	switch (type) {
-		case Asteroid::AsteroidType::STONE:
-			sprite_c.id = texmngr.getIDbyName(L"asteroid");
-			break;
-		case Asteroid::AsteroidType::IRON:
-			sprite_c.id = texmngr.getIDbyName(L"asteroid-iron");
-			break;
-		case Asteroid::AsteroidType::URANIUM:
-			sprite_c.id = texmngr.getIDbyName(L"asteroid-uranium");
-			break;
-	}
+	sprite_c.id = Ore::getTexIDbyOreType(texmngr, type);
 
 	// Вмещение руды
 	OreHolder ore_h;
-	switch (type) {
-		case Asteroid::AsteroidType::IRON:
-			// Вмещаем STANDART_ORE_COUNT штучек руды
-			for (int i = 0; i < STANDART_ORE_COUNT; i++) {
-				Ore ore;
-				ore.count = MAX_ORE_COUNT;
-				ore.type = Ore::OreType::IRON;
-				ore_h.ores.push_back(ore);
-			}
-			break;
-		case Asteroid::AsteroidType::URANIUM:
-			// Вмещаем STANDART_ORE_COUNT штучек руды
-			for (int i = 0; i < STANDART_ORE_COUNT; i++) {
-				Ore ore;
-				ore.count = MAX_ORE_COUNT;
-				ore.type = Ore::OreType::URANIUM;
-				ore_h.ores.push_back(ore);
-			}
-			break;
+
+	// Вмещаем STANDART_ORE_COUNT штучек руды
+	for (int i = 0; i < STANDART_ORE_COUNT; i++) {
+		Ore ore;
+		ore.count = MAX_ORE_COUNT;
+		ore.type = type;
+		ore_h.ores.push_back(ore);
 	}
 
 	b2MassData mass_data;

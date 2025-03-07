@@ -1,7 +1,7 @@
 #include "events.h"
 #include <comp/RenderScene.h>
 
-void events::tick(entt::registry&reg, RenderWindow*rw)
+void gui_events::tick(entt::registry&reg, RenderWindow*rw)
 {
     Event event;
     while (const auto eventbool = rw->pollEvent(event)) {

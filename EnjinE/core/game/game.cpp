@@ -19,8 +19,8 @@ int game::run()
 {
     // TODO: Менеджер текстур
     // TODO: Отрисовка спрайтов в sys/render.h
-    RenderScene rs      = creator::makeRenderScene(reg);
-    TextureManager tm   = creator::makeTextureManager(reg);
+    RenderScene     rs   = creator::makeRenderScene(reg);
+    TextureManager  tm   = creator::makeTextureManager(reg);
 
     creator::makeWorld(reg);
 
@@ -31,7 +31,7 @@ int game::run()
     // Главный цикл
     rs.rw->setVerticalSyncEnabled(true);
     while (rs.rw->isOpen()) {
-        events::tick(reg, rs.rw);
+        gui_events::tick(reg, rs.rw);
         input_controller::tick(reg);
 
         physics::step(reg);

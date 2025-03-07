@@ -5,7 +5,7 @@
 
 #include "comp/RenderScene.h"
 #include "comp/TextureManager.h"
-#include <comp/Asteroid.h>
+#include <comp/minerals/Asteroid.h>
 
 using namespace sf;
 
@@ -21,10 +21,10 @@ public:
 
 	static entt::entity makeAncientMiningDrone(entt::registry&, entt::entity station = entt::null, b2Vec2 pos = b2Vec2_zero);
 	static entt::entity makeAncientMiningDroneStation(entt::registry&, b2Vec2 pos = b2Vec2_zero);
-	// ¬озвращает ентити основной базы
+	// ¬озвращает ентити основной базы дронов
 	static entt::entity makeComposition_MiningAntientDrones(entt::registry&, b2Vec2 pos = b2Vec2_zero);
 
-	static entt::entity makeAsteroid(entt::registry&, Asteroid::AsteroidType = Asteroid::AsteroidType::STONE, b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makeAsteroid(entt::registry&, Ore::OreType = Ore::STONE, b2Vec2 pos = b2Vec2_zero);
 
 };
 

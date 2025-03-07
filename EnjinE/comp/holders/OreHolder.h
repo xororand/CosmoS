@@ -1,5 +1,5 @@
 #pragma once
-#include "Ore.h"
+#include "..\minerals\Ore.h"
 #include <vector>
 
 struct OreHolder {
