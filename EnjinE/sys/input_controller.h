@@ -4,7 +4,7 @@
 class input_controller
 {
 public:
-	static void tick(entt::registry&);
+	static void step(entt::registry&);
 private:
 	static void keyboard_inputs(entt::registry&);
 };

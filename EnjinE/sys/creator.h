@@ -12,6 +12,8 @@ using namespace sf;
 class creator
 {
 public:
+	static entt::entity retdes(entt::registry&, entt::entity);
+
 	static RenderScene makeRenderScene(entt::registry&);
 	static TextureManager makeTextureManager(entt::registry&);
 

@@ -5,7 +5,7 @@
 
 #include "comp/Controllable.h"
 
-void input_controller::tick(entt::registry&reg)
+void input_controller::step(entt::registry&reg)
 {
 	keyboard_inputs(reg);
 }

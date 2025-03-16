@@ -13,6 +13,13 @@
 #include <comp/drons/space/AncientDrone.h>
 #include <comp/drons/space/AncientDroneStation.h>
 
+// return null entt and destroy created
+entt::entity creator::retdes(entt::registry& reg, entt::entity e)
+{
+	reg.destroy(e);
+	return entt::null;
+}
+
 RenderScene creator::makeRenderScene(entt::registry&reg) {
 	RenderScene rs;
 
@@ -131,7 +138,9 @@ entt::entity creator::makeAncientMiningDrone(entt::registry&reg, entt::entity st
 	b2ShapeId sid = b2CreateCircleShape(bid, &sdef, &cir);
 
 	SpriteComp sprite_c;
-	sprite_c.id = texmngr.getIDbyName(L"a-drone");
+	size_t id = texmngr.getIDbyName(L"a-drone");
+	if (id == NO_TEXTURE) return retdes(reg, e);
+	sprite_c.id = id;
 
 	AncientMiningDrone amd;
 	amd.station = station;
@@ -145,8 +154,7 @@ entt::entity creator::makeAncientMiningDrone(entt::registry&reg, entt::entity st
 
 	return e;
 }
-entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 pos)
-{
+entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 pos) {
 	const auto tm = reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
 	TextureManager texmngr = reg.get<TextureManager>(tm.front());
@@ -169,8 +177,8 @@ entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 p
 
 	// Создаем коллизию
 	b2ShapeDef sdef = b2DefaultShapeDef();
-	// Задаем коллизии форму капсулы
 
+	// Задаем коллизии форму капсулы
 	b2Circle cir;
 	cir.center = b2Vec2_zero;
 	cir.radius = 52.0f;
@@ -179,7 +187,9 @@ entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 p
 
 	// Выбор текстуры
 	SpriteComp sprite_c;
-	sprite_c.id = texmngr.getIDbyName(L"asteroid");
+	size_t id = texmngr.getIDbyName(L"asteroid-ancient-station");
+	if (id == NO_TEXTURE) return retdes(reg, e);
+	sprite_c.id = id;
 
 	// Вмещение начальной руды
 	OreHolder ore_h;
@@ -214,10 +224,6 @@ entt::entity creator::makeComposition_MiningAntientDrones(entt::registry& reg, b
 
 entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2 pos)
 {
-	const auto tm = reg.view<TextureManager>();
-	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = reg.get<TextureManager>(tm.front());
-
 	// Ищем первый попавшийся мир
 	const auto view = reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
@@ -237,7 +243,6 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2
 	// Создаем коллизию
 	b2ShapeDef sdef = b2DefaultShapeDef();
 	// Задаем коллизии форму капсулы
-
 	b2Circle cir;
 	cir.center = b2Vec2_zero;
 	cir.radius = 52.0f;
@@ -249,7 +254,9 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2
 
 	// Выбор текстуры
 	SpriteComp sprite_c;
-	sprite_c.id = Ore::getTexIDbyOreType(texmngr, type);
+	size_t texid = Ore::getTexIDbyOreType(reg, type);
+	if (texid == -1) return retdes(reg, e);
+	sprite_c.id = texid;
 
 	// Вмещение руды
 	OreHolder ore_h;

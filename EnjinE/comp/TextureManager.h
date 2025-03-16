@@ -7,6 +7,8 @@
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
 
+#define NO_TEXTURE -1
+
 namespace fs = std::filesystem;
 
 class Game;
@@ -17,7 +19,6 @@ private:
 	// TODO: LOADING ALL TEXTURES COMPILTED TO ATLASES
 	std::map<std::wstring, sf::Texture*> m_textures;
 	std::vector<std::wstring> m_order;
-	size_t no_texture_id = 0;
 public:
 	TextureManager();
 

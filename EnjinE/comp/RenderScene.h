@@ -7,7 +7,6 @@ struct RenderScene {
 	sf::View view = {};
 	RenderWindow* rw;
 	sf::Clock deltaClock;
-
-
+	
 	sf::Font mfont;
 };

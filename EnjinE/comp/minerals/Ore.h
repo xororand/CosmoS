@@ -13,11 +13,18 @@ struct Ore {
 	OreType type;
 	int count = 0;
 
-	static size_t getTexIDbyOreType(TextureManager tm, OreType t) {
+	static size_t getTexIDbyOreType(entt::registry& reg, OreType t) {
+		const auto tm = reg.view<TextureManager>();
+		if (tm.begin() == tm.end()) return -1;
+		TextureManager texmngr = reg.get<TextureManager>(tm.front());
+
 		switch (t) {
-			case Ore::STONE:	return tm.getIDbyName(L"asteroid");
-			case Ore::IRON:		return tm.getIDbyName(L"asteroid-iron");
-			case Ore::URANIUM:	return tm.getIDbyName(L"asteroid-uranium");
+			case Ore::STONE:	return texmngr.getIDbyName(L"asteroid");
+			case Ore::IRON:		return texmngr.getIDbyName(L"asteroid-iron");
+			case Ore::URANIUM:	return texmngr.getIDbyName(L"asteroid-uranium");
 		}
+	}
+	float getWeight() {
+
 	}
 };
