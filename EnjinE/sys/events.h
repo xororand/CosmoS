@@ -4,6 +4,6 @@
 class gui_events
 {
 public:
-	static void step(entt::registry&, RenderWindow*);
+	static void step(RenderWindow*);
 };
 

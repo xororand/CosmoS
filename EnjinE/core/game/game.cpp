@@ -9,8 +9,6 @@
 #include "sys/logics.h"
 #include "sys/input_controller.h"
 
-
-
 game::game() {
     srand(time(0));
 }
@@ -33,13 +31,13 @@ int game::run()
     // Главный цикл
     rs.rw->setVerticalSyncEnabled(true);
     while (rs.rw->isOpen()) {
-        gui_events::step(reg, rs.rw);
+        gui_events::step(rs.rw);
         input_controller::step();
 
         physics::step();
         logics::step();
 
-        render::frame(reg, rs);
+        render::frame(rs);
     }
 
     return 0;

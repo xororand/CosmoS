@@ -1,18 +1,20 @@
 #include "render.h"
 #include <box2d/box2d.h>
 
+#include "core/game/game.h"
+
 #include "comp/Player.h"
 #include "comp/SpriteComp.h"
 #include <comp/TextureManager.h>
 #include <comp/Controllable.h>
 
-void render::frame(entt::registry&reg, RenderScene& rs) {
+void render::frame(RenderScene& rs) {
     ImGui::SFML::Update(*rs.rw, rs.deltaClock.restart());
 
     if (ImGui::Begin("Debug")) {
-        const auto p = reg.view<Player, b2BodyId>();
+        const auto p = game::reg.view<Player, b2BodyId>();
         if (p.begin() != p.end()) {
-            b2BodyId bid = reg.get<b2BodyId>(p.front());
+            b2BodyId bid = game::reg.get<b2BodyId>(p.front());
             b2Vec2  pos = b2Body_GetPosition(bid);
             b2Vec2  vel = b2Body_GetLinearVelocity(bid);
             b2Rot   rot = b2Body_GetRotation(bid);
@@ -22,9 +24,9 @@ void render::frame(entt::registry&reg, RenderScene& rs) {
             ImGui::Text(std::format("Rotation:\tcos:{:.4f}, sin:{:.4f}", rot.c, rot.s).c_str());
         }
 
-        const auto c = reg.view<Controllable>();
+        const auto c = game::reg.view<Controllable>();
         if (p.begin() != p.end()) {
-            Controllable* ctrla = &reg.get<Controllable>(p.front());
+            Controllable* ctrla = &game::reg.get<Controllable>(p.front());
             ImGui::Text(std::format("WASD:\t{},{},{},{}", ctrla->w, ctrla->a, ctrla->s, ctrla->d).c_str());
         }
 
@@ -35,24 +37,23 @@ void render::frame(entt::registry&reg, RenderScene& rs) {
     
     rs.rw->clear(Color(150, 150, 150));
 
-    set_controllable_view(reg, rs);
-    render_physics(reg, rs);
+    set_controllable_view(rs);
+    render_physics(rs);
 
     ImGui::SFML::Render(*rs.rw);
     rs.rw->display();
 }
 
-void render::render_physics(entt::registry&reg, RenderScene rs) {
+void render::render_physics(RenderScene rs) {
 
-    const auto tm = reg.view<TextureManager>();
+    const auto tm = game::reg.view<TextureManager>();
     if (tm.begin() == tm.end()) return;
-    TextureManager texmngr = reg.get<TextureManager>(tm.front());
+    TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
 
-    const auto view = reg.view<SpriteComp, b2BodyId>();
+    const auto view = game::reg.view<SpriteComp, b2BodyId>();
     for (auto e : view) {
-
-        SpriteComp sprite_c = reg.get<SpriteComp>(e);
-        b2BodyId bid = reg.get<b2BodyId>(e);
+        SpriteComp sprite_c = game::reg.get<SpriteComp>(e);
+        b2BodyId bid = game::reg.get<b2BodyId>(e);
 
         b2Vec2 b2pos = b2Body_GetPosition(bid);
         Vector2f pos = Vector2f(b2pos.x, b2pos.y);
@@ -83,6 +84,7 @@ void render::render_physics(entt::registry&reg, RenderScene rs) {
 
         Sprite sprite;
         sprite.setTexture(*texture);
+        
         sprite.setPosition(pos);
         sprite.setRotation(angle);
         sprite.setOrigin(Vector2f(texture->getSize().x / 2.0f, texture->getSize().y / 2.0f));
@@ -126,9 +128,9 @@ void render::render_physics(entt::registry&reg, RenderScene rs) {
     }
 }
 
-void render::set_controllable_view(entt::registry&reg, RenderScene rs)
+void render::set_controllable_view(RenderScene rs)
 {
-    const auto view = reg.view<Controllable, b2BodyId>();
+    const auto view = game::reg.view<Controllable, b2BodyId>();
     if (view.begin() == view.end()) return;
 
     Controllable ctrla = view.get<Controllable>(view.front());
@@ -137,10 +139,10 @@ void render::set_controllable_view(entt::registry&reg, RenderScene rs)
     b2Vec2 pos = b2Body_GetPosition(bid);
 
     // Установка камеры на контролируемое
-    const auto t1 = reg.view<RenderScene>();
+    const auto t1 = game::reg.view<RenderScene>();
     if (t1.begin() != t1.end()) {
         const auto e = t1.front();
-        RenderScene rs = reg.get<RenderScene>(e);
+        RenderScene rs = game::reg.get<RenderScene>(e);
         Vector2u size = rs.rw->getSize();
         sf::View view(sf::Vector2f(pos.x, pos.y), sf::Vector2f(size.x / 64.0f * 25, size.y / 64.0f * 25));
         rs.rw->setView(view);

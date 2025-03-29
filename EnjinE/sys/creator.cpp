@@ -189,6 +189,7 @@ entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
 	size_t id = texmngr.getIDbyName(L"asteroid-ancient-station");
 	if (id == NO_TEXTURE) return retdes(e);
 	sprite_c.id = id;
+	sprite_c.layer = -1;
 
 	// Вмещение начальной руды
 	OreHolder ore_h;
