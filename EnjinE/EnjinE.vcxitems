@@ -39,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\hashes\sha256.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\vmath.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\logics.cpp" />
@@ -52,5 +53,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\creator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\hashes\sha256.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Utils.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\vmath.cpp" />
   </ItemGroup>
 </Project>

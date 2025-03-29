@@ -8,6 +8,8 @@
 #include <comp/TextureManager.h>
 #include <comp/Controllable.h>
 
+#include "utils/vmath.h"
+
 void render::frame() {
     ImGui::SFML::Update(*game::rs.rw, game::rs.deltaClock.restart());
 
@@ -49,8 +51,22 @@ void render::render_physics() {
 
     std::vector<std::pair<entt::entity, Int8>> sprites;
 
+    const auto pv = game::reg.view<Player, Controllable, b2BodyId>();
+    if (pv.begin() == pv.end()) return;
+    b2BodyId bid = pv.get<b2BodyId>(pv.front());
+    b2Vec2 ppos = b2Body_GetPosition(bid);
+
     for (auto e : view) {
+        Player ps = game::reg.get<Player>(pv.front());
         SpriteComp s = game::reg.get<SpriteComp>(e);
+        b2BodyId ebid = game::reg.get<b2BodyId>(e);
+
+        b2Vec2 epos = b2Body_GetPosition(ebid);
+
+        float dist = vmath::dist(epos, ppos);
+
+        if (dist > ps.viewDist) continue;
+
         sprites.push_back({ e, s.layer });
     }
 
