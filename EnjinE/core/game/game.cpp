@@ -1,11 +1,15 @@
 #include "game.h"
 
+#include <entt/entity/registry.hpp>
+
 #include "sys/events.h"
 #include "sys/render.h"
 #include "sys/creator.h"
 #include "sys/physics.h"
 #include "sys/logics.h"
 #include "sys/input_controller.h"
+
+
 
 game::game() {
     srand(time(0));
@@ -17,23 +21,23 @@ game::~game()
 
 int game::run()
 {
-    RenderScene     rs   = creator::makeRenderScene(reg);
-    TextureManager  tm   = creator::makeTextureManager(reg);
+    RenderScene     rs   = creator::makeRenderScene();
+    TextureManager  tm   = creator::makeTextureManager();
 
-    creator::makeWorld(reg);
+    creator::makeWorld();
 
-    creator::makePlayer(reg);
+    creator::makePlayer();
 
-    creator::makeComposition_MiningAntientDrones(reg, b2Vec2(64.0f, 0.0f));
+    creator::makeComposition_MiningAntientDrones(b2Vec2(64.0f, 0.0f));
     
     // Главный цикл
     rs.rw->setVerticalSyncEnabled(true);
     while (rs.rw->isOpen()) {
         gui_events::step(reg, rs.rw);
-        input_controller::step(reg);
+        input_controller::step();
 
-        physics::step(reg);
-        logics::step(reg);
+        physics::step();
+        logics::step();
 
         render::frame(reg, rs);
     }

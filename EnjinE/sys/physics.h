@@ -4,10 +4,10 @@
 class physics
 {
 public:
-	static void step(entt::registry&);
+	static void step();
 
 private:
-	static void stepWorld(entt::registry&);
-	static void stepBodys(entt::registry&);
+	static void stepWorld();
+	static void stepBodys();
 };
 

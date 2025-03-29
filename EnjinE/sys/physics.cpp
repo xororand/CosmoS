@@ -1,5 +1,7 @@
 #include "physics.h"
 
+#include "core/game/game.h"
+
 #include <entt/entity/registry.hpp>
 #include "box2d/box2d.h"
 #include "SFML/Graphics.hpp"
@@ -8,15 +10,15 @@
 #include "comp/Controllable.h"
 #include <comp/RenderScene.h>
 
-void physics::step(entt::registry&reg) {
-	stepWorld(reg);
-	stepBodys(reg);
+void physics::step() {
+	stepWorld();
+	stepBodys();
 }
 
-void physics::stepWorld(entt::registry&reg)
+void physics::stepWorld()
 {
 	// »щем первый попавшийс€ мир
-	const auto view = reg.view<World, b2WorldId>();
+	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return;
 
 	World world = view.get<World>(view.front());
@@ -25,14 +27,14 @@ void physics::stepWorld(entt::registry&reg)
 	b2World_Step(wid, world.timeStep, world.SubStepCount);
 }
 
-void physics::stepBodys(entt::registry&reg)
+void physics::stepBodys()
 {
-	const auto view = reg.view<b2BodyId>();
+	const auto view = game::reg.view<b2BodyId>();
 	for (const auto e : view) {
 		b2Vec2 vdelta = b2Vec2_zero;
 		b2BodyId bid = view.get<b2BodyId>(e);
 
-		if (auto ctrla = reg.try_get<Controllable>(e); ctrla) {
+		if (auto ctrla = game::reg.try_get<Controllable>(e); ctrla) {
 			const float speed = 10000.0f;
 			if (ctrla->w) vdelta.y -= 1.0f * speed;
 			if (ctrla->s) vdelta.y += 1.0f * speed;

@@ -1,6 +1,5 @@
 #include "creator.h"
 
-#include <entt/entity/registry.hpp>
 #include "box2d/box2d.h"
 #include "SFML/Graphics.hpp"
 
@@ -14,13 +13,13 @@
 #include <comp/drons/space/AncientDroneStation.h>
 
 // return null entt and destroy created
-entt::entity creator::retdes(entt::registry& reg, entt::entity e)
+entt::entity creator::retdes(entt::entity e)
 {
-	reg.destroy(e);
+	game::reg.destroy(e);
 	return entt::null;
 }
 
-RenderScene creator::makeRenderScene(entt::registry&reg) {
+RenderScene creator::makeRenderScene() {
 	RenderScene rs;
 
 	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 800 }), "CosmoS");
@@ -35,25 +34,25 @@ RenderScene creator::makeRenderScene(entt::registry&reg) {
 
 	ImGui::SFML::Init(*rw);
 
-	const auto e = reg.create();
-	reg.emplace<RenderScene>(e, rs);
+	const auto e = game::reg.create();
+	game::reg.emplace<RenderScene>(e, rs);
 
 	rs.rw->setActive();
 
 	return rs;
 }
-TextureManager creator::makeTextureManager(entt::registry&reg) {
+TextureManager creator::makeTextureManager() {
 	TextureManager tm = TextureManager();
 	tm.loadTexturesFromRootResources();
 
-	const auto e = reg.create();
-	reg.emplace<TextureManager>(e, tm);
+	const auto e = game::reg.create();
+	game::reg.emplace<TextureManager>(e, tm);
 
 	return tm;
 }
 
-void creator::makeWorld(entt::registry&reg) {
-	const auto e = reg.create();
+void creator::makeWorld() {
+	const auto e = game::reg.create();
 	
 	World world;
 	world.timeStep = 1.0f / 60.0f;
@@ -64,21 +63,21 @@ void creator::makeWorld(entt::registry&reg) {
 	wdef.enableSleep = true;
 	b2WorldId wid = b2CreateWorld(&wdef);
 	
-	reg.emplace<World>(e, world);
-	reg.emplace<b2WorldId>(e, wid);
+	game::reg.emplace<World>(e, world);
+	game::reg.emplace<b2WorldId>(e, wid);
 }
 
-entt::entity creator::makePlayer(entt::registry&reg, b2Vec2 pos) {
-	const auto tm = reg.view<TextureManager>();
+entt::entity creator::makePlayer(b2Vec2 pos) {
+	const auto tm = game::reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = reg.get<TextureManager>(tm.front());
+	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
 
 	// Ищем первый попавшийся мир
-	const auto view = reg.view<World, b2WorldId>();
+	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
 	b2WorldId wid = view.get<b2WorldId>(view.front());
 
-	const auto e = reg.create();
+	const auto e = game::reg.create();
 
 	// Создаем тело игрока
 	b2BodyDef bdef = b2DefaultBodyDef();
@@ -100,25 +99,25 @@ entt::entity creator::makePlayer(entt::registry&reg, b2Vec2 pos) {
 	SpriteComp sprite_c;
 	sprite_c.id = texmngr.getIDbyName(L"a-drone");
 
-	reg.emplace<Player>(e);
-	reg.emplace<Controllable>(e);
-	reg.emplace<SpriteComp>(e, sprite_c);
-	reg.emplace<b2BodyId>(e, bid);
+	game::reg.emplace<Player>(e);
+	game::reg.emplace<Controllable>(e);
+	game::reg.emplace<SpriteComp>(e, sprite_c);
+	game::reg.emplace<b2BodyId>(e, bid);
 
 	return e;
 }
 
-entt::entity creator::makeAncientMiningDrone(entt::registry&reg, entt::entity station, b2Vec2 pos) {
-	const auto tm = reg.view<TextureManager>();
+entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
+	const auto tm = game::reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = reg.get<TextureManager>(tm.front());
+	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
 
 	// Ищем первый попавшийся мир
-	const auto view = reg.view<World, b2WorldId>();
+	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
 	b2WorldId wid = view.get<b2WorldId>(view.front());
 
-	const auto e = reg.create();
+	const auto e = game::reg.create();
 
 	// Создаем тело
 	b2BodyDef bdef = b2DefaultBodyDef();
@@ -139,32 +138,32 @@ entt::entity creator::makeAncientMiningDrone(entt::registry&reg, entt::entity st
 
 	SpriteComp sprite_c;
 	size_t id = texmngr.getIDbyName(L"a-drone");
-	if (id == NO_TEXTURE) return retdes(reg, e);
+	if (id == NO_TEXTURE) return retdes(e);
 	sprite_c.id = id;
 
 	AncientMiningDrone amd;
 	amd.station = station;
 
-	reg.emplace<AI>(e);
-	reg.emplace<AncientDrone>(e);
-	reg.emplace<AncientMiningDrone>(e, amd);
-	reg.emplace<OreHolder>(e);
-	reg.emplace<SpriteComp>(e, sprite_c);
-	reg.emplace<b2BodyId>(e, bid);
+	game::reg.emplace<AI>(e);
+	game::reg.emplace<AncientDrone>(e);
+	game::reg.emplace<AncientMiningDrone>(e, amd);
+	game::reg.emplace<OreHolder>(e);
+	game::reg.emplace<SpriteComp>(e, sprite_c);
+	game::reg.emplace<b2BodyId>(e, bid);
 
 	return e;
 }
-entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 pos) {
-	const auto tm = reg.view<TextureManager>();
+entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
+	const auto tm = game::reg.view<TextureManager>();
 	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = reg.get<TextureManager>(tm.front());
+	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
 
 	// Ищем первый попавшийся мир
-	const auto view = reg.view<World, b2WorldId>();
+	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
 	b2WorldId wid = view.get<b2WorldId>(view.front());
 
-	const auto e = reg.create();
+	const auto e = game::reg.create();
 
 	// Создаем тело
 	b2BodyDef bdef = b2DefaultBodyDef();
@@ -188,7 +187,7 @@ entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 p
 	// Выбор текстуры
 	SpriteComp sprite_c;
 	size_t id = texmngr.getIDbyName(L"asteroid-ancient-station");
-	if (id == NO_TEXTURE) return retdes(reg, e);
+	if (id == NO_TEXTURE) return retdes(e);
 	sprite_c.id = id;
 
 	// Вмещение начальной руды
@@ -201,35 +200,35 @@ entt::entity creator::makeAncientMiningDroneStation(entt::registry&reg, b2Vec2 p
 
 	b2Body_SetMassData(bid, mass_data);
 
-	reg.emplace<AncientDroneStation>(e);
-	reg.emplace<OreHolder>(e, ore_h);
-	reg.emplace<SpriteComp>(e, sprite_c);
-	reg.emplace<b2BodyId>(e, bid);
+	game::reg.emplace<AncientDroneStation>(e);
+	game::reg.emplace<OreHolder>(e, ore_h);
+	game::reg.emplace<SpriteComp>(e, sprite_c);
+	game::reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
-entt::entity creator::makeComposition_MiningAntientDrones(entt::registry& reg, b2Vec2 pos) {
-	entt::entity ds_e = makeAncientMiningDroneStation(reg, pos);
+entt::entity creator::makeComposition_MiningAntientDrones(b2Vec2 pos) {
+	entt::entity ds_e = makeAncientMiningDroneStation(pos);
 	if (ds_e == entt::null) return entt::null;
 
-	AncientDroneStation* station = &reg.get<AncientDroneStation>(ds_e);
+	AncientDroneStation* station = &game::reg.get<AncientDroneStation>(ds_e);
 
 	// спавним дронов
 	for (int i = 0; i < rand() % 10 + 1; i++) { 
-		const auto e = makeAncientMiningDrone(reg, ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		const auto e = makeAncientMiningDrone(ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
 		station->drones.push_back(e);
 	}
 
 	return ds_e;
 }
 
-entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2 pos)
+entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
 {
 	// Ищем первый попавшийся мир
-	const auto view = reg.view<World, b2WorldId>();
+	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
 	b2WorldId wid = view.get<b2WorldId>(view.front());
 
-	const auto e = reg.create();
+	const auto e = game::reg.create();
 
 	// Создаем тело
 	b2BodyDef bdef = b2DefaultBodyDef();
@@ -254,8 +253,8 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2
 
 	// Выбор текстуры
 	SpriteComp sprite_c;
-	size_t texid = Ore::getTexIDbyOreType(reg, type);
-	if (texid == -1) return retdes(reg, e);
+	size_t texid = Ore::getTexIDbyOreType(game::reg, type);
+	if (texid == -1) return retdes(e);
 	sprite_c.id = texid;
 
 	// Вмещение руды
@@ -276,10 +275,10 @@ entt::entity creator::makeAsteroid(entt::registry&reg, Ore::OreType type, b2Vec2
 
 	b2Body_SetMassData(bid, mass_data);
 
-	reg.emplace<Asteroid>(e, aster);
-	reg.emplace<OreHolder>(e, ore_h);
-	reg.emplace<SpriteComp>(e, sprite_c);
-	reg.emplace<b2BodyId>(e, bid);
+	game::reg.emplace<Asteroid>(e, aster);
+	game::reg.emplace<OreHolder>(e, ore_h);
+	game::reg.emplace<SpriteComp>(e, sprite_c);
+	game::reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
 

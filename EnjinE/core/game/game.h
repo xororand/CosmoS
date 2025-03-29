@@ -4,9 +4,8 @@
 
 class game
 {
-private:
-	entt::registry reg;
 public:
+	static inline entt::registry reg;
 	game();
 	~game();
 

@@ -4,6 +4,6 @@
 class logics
 {
 public:
-	static void step(entt::registry&);
+	static void step();
 };
 

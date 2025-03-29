@@ -4,8 +4,8 @@
 class input_controller
 {
 public:
-	static void step(entt::registry&);
+	static void step();
 private:
-	static void keyboard_inputs(entt::registry&);
+	static void keyboard_inputs();
 };
 

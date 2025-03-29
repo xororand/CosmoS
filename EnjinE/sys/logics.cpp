@@ -3,7 +3,7 @@
 
 #include "sys/drons/space/ancient_drone_station.h"
 
-void logics::step(entt::registry&reg)
+void logics::step()
 {
-	ancient_drone_station::tick(reg);
+	ancient_drone_station::tick();
 }

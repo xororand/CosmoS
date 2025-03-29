@@ -11,8 +11,6 @@
 
 namespace fs = std::filesystem;
 
-class Game;
-
 class TextureManager
 {
 private:
