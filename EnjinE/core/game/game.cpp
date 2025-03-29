@@ -19,8 +19,8 @@ game::~game()
 
 int game::run()
 {
-    RenderScene     rs   = creator::makeRenderScene();
-    TextureManager  tm   = creator::makeTextureManager();
+    creator::makeRenderScene();
+    creator::makeTextureManager();
 
     creator::makeWorld();
 
@@ -30,6 +30,7 @@ int game::run()
     
     // Главный цикл
     rs.rw->setVerticalSyncEnabled(true);
+
     while (rs.rw->isOpen()) {
         gui_events::step(rs.rw);
         input_controller::step();
@@ -37,7 +38,7 @@ int game::run()
         physics::step();
         logics::step();
 
-        render::frame(rs);
+        render::frame();
     }
 
     return 0;

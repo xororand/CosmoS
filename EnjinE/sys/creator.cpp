@@ -19,36 +19,26 @@ entt::entity creator::retdes(entt::entity e)
 	return entt::null;
 }
 
-RenderScene creator::makeRenderScene() {
-	RenderScene rs;
+void creator::makeRenderScene() {
+	game::rs = RenderScene();
 
 	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 800 }), "CosmoS");
 	rw->setFramerateLimit(60);
-	rs.rw = rw;
+	game::rs.rw = rw;
 	
-	if (!rs.mfont.loadFromFile("Resources\\fonts\\Hardpixel-nn51.otf"))
+	if (!game::rs.mfont.loadFromFile("Resources\\fonts\\Hardpixel-nn51.otf"))
 	{
 		// error...
 	}
-	rs.mfont.setSmooth(false);
+	game::rs.mfont.setSmooth(false);
 
 	ImGui::SFML::Init(*rw);
 
-	const auto e = game::reg.create();
-	game::reg.emplace<RenderScene>(e, rs);
-
-	rs.rw->setActive();
-
-	return rs;
+	game::rs.rw->setActive();
 }
-TextureManager creator::makeTextureManager() {
-	TextureManager tm = TextureManager();
-	tm.loadTexturesFromRootResources();
-
-	const auto e = game::reg.create();
-	game::reg.emplace<TextureManager>(e, tm);
-
-	return tm;
+void creator::makeTextureManager() {
+	game::texmngr = TextureManager();
+	game::texmngr.loadTexturesFromRootResources();
 }
 
 void creator::makeWorld() {
@@ -68,10 +58,6 @@ void creator::makeWorld() {
 }
 
 entt::entity creator::makePlayer(b2Vec2 pos) {
-	const auto tm = game::reg.view<TextureManager>();
-	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
-
 	// Ищем первый попавшийся мир
 	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
@@ -97,7 +83,7 @@ entt::entity creator::makePlayer(b2Vec2 pos) {
 	b2ShapeId sid = b2CreateCircleShape(bid, &sdef, &cir);
 
 	SpriteComp sprite_c;
-	sprite_c.id = texmngr.getIDbyName(L"a-drone");
+	sprite_c.id = game::texmngr.getIDbyName(L"a-drone");
 
 	game::reg.emplace<Player>(e);
 	game::reg.emplace<Controllable>(e);
@@ -108,10 +94,6 @@ entt::entity creator::makePlayer(b2Vec2 pos) {
 }
 
 entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
-	const auto tm = game::reg.view<TextureManager>();
-	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
-
 	// Ищем первый попавшийся мир
 	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
@@ -137,9 +119,10 @@ entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
 	b2ShapeId sid = b2CreateCircleShape(bid, &sdef, &cir);
 
 	SpriteComp sprite_c;
-	size_t id = texmngr.getIDbyName(L"a-drone");
+	size_t id = game::texmngr.getIDbyName(L"a-drone");
 	if (id == NO_TEXTURE) return retdes(e);
 	sprite_c.id = id;
+	sprite_c.layer = 1;
 
 	AncientMiningDrone amd;
 	amd.station = station;
@@ -154,10 +137,6 @@ entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
 	return e;
 }
 entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
-	const auto tm = game::reg.view<TextureManager>();
-	if (tm.begin() == tm.end()) return entt::null;
-	TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
-
 	// Ищем первый попавшийся мир
 	const auto view = game::reg.view<World, b2WorldId>();
 	if (view.begin() == view.end()) return entt::null;
@@ -186,7 +165,7 @@ entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
 
 	// Выбор текстуры
 	SpriteComp sprite_c;
-	size_t id = texmngr.getIDbyName(L"asteroid-ancient-station");
+	size_t id = game::texmngr.getIDbyName(L"asteroid-ancient-station");
 	if (id == NO_TEXTURE) return retdes(e);
 	sprite_c.id = id;
 	sprite_c.layer = -1;
@@ -207,21 +186,6 @@ entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
 	game::reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
-entt::entity creator::makeComposition_MiningAntientDrones(b2Vec2 pos) {
-	entt::entity ds_e = makeAncientMiningDroneStation(pos);
-	if (ds_e == entt::null) return entt::null;
-
-	AncientDroneStation* station = &game::reg.get<AncientDroneStation>(ds_e);
-
-	// спавним дронов
-	for (int i = 0; i < rand() % 10 + 1; i++) { 
-		const auto e = makeAncientMiningDrone(ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
-		station->drones.push_back(e);
-	}
-
-	return ds_e;
-}
-
 entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
 {
 	// Ищем первый попавшийся мир
@@ -255,8 +219,9 @@ entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
 	// Выбор текстуры
 	SpriteComp sprite_c;
 	size_t texid = Ore::getTexIDbyOreType(game::reg, type);
-	if (texid == -1) return retdes(e);
+	if (texid == NO_TEXTURE) return retdes(e);
 	sprite_c.id = texid;
+	sprite_c.layer = -1;
 
 	// Вмещение руды
 	OreHolder ore_h;
@@ -282,4 +247,30 @@ entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
 	game::reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
+
+// КОМПОЗИЦИИ
+entt::entity creator::makeComposition_MiningAntientDrones(b2Vec2 pos) {
+	entt::entity ds_e = makeAncientMiningDroneStation(pos);
+	if (ds_e == entt::null) return entt::null;
+
+	AncientDroneStation* station = &game::reg.get<AncientDroneStation>(ds_e);
+
+	int asterc = rand() % 3 + 1;
+	int dronc = 2 * asterc;
+
+	// спавним дронов
+	for (int i = 0; i < dronc; i++) {
+		const auto e = makeAncientMiningDrone(ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		station->drones.push_back(e);
+	}
+
+	// спавним астероиды
+	for (int i = 0; i < asterc; i++) {
+		const auto e = makeAsteroid(Ore::getRand(), pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		//station->drones.push_back(e);
+	}
+
+	return ds_e;
+}
+
 

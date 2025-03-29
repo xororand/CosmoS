@@ -7,24 +7,26 @@ struct Ore {
 		STONE,
 		IRON,
 		COPPER,
-		URANIUM
+		URANIUM,
+		last
 	};
 
 	OreType type;
 	int count = 0;
 
 	static size_t getTexIDbyOreType(entt::registry& reg, OreType t) {
-		const auto tm = reg.view<TextureManager>();
-		if (tm.begin() == tm.end()) return -1;
-		TextureManager texmngr = reg.get<TextureManager>(tm.front());
-
 		switch (t) {
-			case Ore::STONE:	return texmngr.getIDbyName(L"asteroid");
-			case Ore::IRON:		return texmngr.getIDbyName(L"asteroid-iron");
-			case Ore::URANIUM:	return texmngr.getIDbyName(L"asteroid-uranium");
+			case Ore::STONE:	return game::texmngr.getIDbyName(L"asteroid");
+			case Ore::IRON:		return game::texmngr.getIDbyName(L"asteroid-iron");
+			case Ore::COPPER:	return game::texmngr.getIDbyName(L"asteroid-copper");
+			case Ore::URANIUM:	return game::texmngr.getIDbyName(L"asteroid-uranium");
 		}
+		return NO_TEXTURE;
 	}
 	float getWeight() {
 
+	}
+	static OreType getRand() {
+		return (OreType)(rand() % OreType::last);
 	}
 };

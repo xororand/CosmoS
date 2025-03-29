@@ -8,8 +8,8 @@
 #include <comp/TextureManager.h>
 #include <comp/Controllable.h>
 
-void render::frame(RenderScene& rs) {
-    ImGui::SFML::Update(*rs.rw, rs.deltaClock.restart());
+void render::frame() {
+    ImGui::SFML::Update(*game::rs.rw, game::rs.deltaClock.restart());
 
     if (ImGui::Begin("Debug")) {
         const auto p = game::reg.view<Player, b2BodyId>();
@@ -30,28 +30,37 @@ void render::frame(RenderScene& rs) {
             ImGui::Text(std::format("WASD:\t{},{},{},{}", ctrla->w, ctrla->a, ctrla->s, ctrla->d).c_str());
         }
 
-        ImGui::Checkbox("Debug physics", &rs.is_debug_physics);
+        ImGui::Checkbox("Debug physics", &game::rs.is_debug_physics);
 
         ImGui::End();
     }
     
-    rs.rw->clear(Color(150, 150, 150));
+    game::rs.rw->clear(Color(150, 150, 150));
 
-    set_controllable_view(rs);
-    render_physics(rs);
+    set_controllable_view();
+    render_physics();
 
-    ImGui::SFML::Render(*rs.rw);
-    rs.rw->display();
+    ImGui::SFML::Render(*game::rs.rw);
+    game::rs.rw->display();
 }
 
-void render::render_physics(RenderScene rs) {
-
-    const auto tm = game::reg.view<TextureManager>();
-    if (tm.begin() == tm.end()) return;
-    TextureManager texmngr = game::reg.get<TextureManager>(tm.front());
-
+void render::render_physics() {
     const auto view = game::reg.view<SpriteComp, b2BodyId>();
+
+    std::vector<std::pair<entt::entity, Int8>> sprites;
+
     for (auto e : view) {
+        SpriteComp s = game::reg.get<SpriteComp>(e);
+        sprites.push_back({ e, s.layer });
+    }
+
+    // Сортируем по возрастанию значения (Int8)
+    std::sort(sprites.begin(), sprites.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second; // Для убывания: `a.second > b.second`
+    });
+
+    for (auto s : sprites) {
+        auto e = s.first;
         SpriteComp sprite_c = game::reg.get<SpriteComp>(e);
         b2BodyId bid = game::reg.get<b2BodyId>(e);
 
@@ -77,7 +86,7 @@ void render::render_physics(RenderScene rs) {
 
         float angle = acos(rot.c) / (b2_pi / 180);
 
-        Texture* texture = texmngr.getTexture(sprite_c.id);
+        Texture* texture = game::texmngr.getTexture(sprite_c.id);
 
         if (texture == nullptr) continue;
         texture->setSrgb(true);
@@ -88,9 +97,9 @@ void render::render_physics(RenderScene rs) {
         sprite.setPosition(pos);
         sprite.setRotation(angle);
         sprite.setOrigin(Vector2f(texture->getSize().x / 2.0f, texture->getSize().y / 2.0f));
-        rs.rw->draw(sprite);
+        game::rs.rw->draw(sprite);
 
-        if (rs.is_debug_physics) {
+        if (game::rs.is_debug_physics) {
             // Рисуем бокс
             sf::Vertex line[] =
             {
@@ -99,12 +108,12 @@ void render::render_physics(RenderScene rs) {
                 sf::Vertex(sf::Vector2f(pos.x - dbg_size, pos.y - dbg_size)), sf::Vertex(sf::Vector2f(pos.x + dbg_size, pos.y - dbg_size)),
                 sf::Vertex(sf::Vector2f(pos.x + dbg_size, pos.y - dbg_size)), sf::Vertex(sf::Vector2f(pos.x + dbg_size, pos.y + dbg_size)),
             };
-            rs.rw->draw(line, 8, sf::Lines);
+            game::rs.rw->draw(line, 8, sf::Lines);
 
-            Text text_position = Text(std::format("p:\t{:.4f},{:.4f}", pos.x, pos.y), rs.mfont, 24);
-            Text text_rotation = Text(std::format("r:\t{:.4f},s:{:.4f}", rot.c, rot.s), rs.mfont, 24);
-            Text text_velocity = Text(std::format("vel:\t{:.4f},{:.4f}", vel.x, vel.y), rs.mfont, 24);
-            Text text_n_textur = Text(std::format(L"tex:\t{}", texmngr.getNamebyID(sprite_c.id)), rs.mfont, 24);
+            Text text_position = Text(std::format("p:\t{:.4f},{:.4f}", pos.x, pos.y), game::rs.mfont, 24);
+            Text text_rotation = Text(std::format("r:\t{:.4f},s:{:.4f}", rot.c, rot.s), game::rs.mfont, 24);
+            Text text_velocity = Text(std::format("vel:\t{:.4f},{:.4f}", vel.x, vel.y), game::rs.mfont, 24);
+            Text text_n_textur = Text(std::format(L"tex:\t{}", game::texmngr.getNamebyID(sprite_c.id)), game::rs.mfont, 24);
 
             const float text_scale = 0.2f;
             const Vector2f text_padding = Vector2f(2.5f, 0.0f);
@@ -120,31 +129,26 @@ void render::render_physics(RenderScene rs) {
             text_velocity.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 10));
             text_n_textur.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 15));
 
-            rs.rw->draw(text_position);
-            rs.rw->draw(text_rotation);
-            rs.rw->draw(text_velocity);
-            rs.rw->draw(text_n_textur);
+            game::rs.rw->draw(text_position);
+            game::rs.rw->draw(text_rotation);
+            game::rs.rw->draw(text_velocity);
+            game::rs.rw->draw(text_n_textur);
         }
     }
 }
 
-void render::set_controllable_view(RenderScene rs)
+void render::set_controllable_view()
 {
-    const auto view = game::reg.view<Controllable, b2BodyId>();
-    if (view.begin() == view.end()) return;
+    const auto v = game::reg.view<Controllable, b2BodyId>();
+    if (v.begin() == v.end()) return;
 
-    Controllable ctrla = view.get<Controllable>(view.front());
-    b2BodyId bid = view.get<b2BodyId>(view.front());
+    Controllable ctrla = v.get<Controllable>(v.front());
+    b2BodyId bid = v.get<b2BodyId>(v.front());
 
     b2Vec2 pos = b2Body_GetPosition(bid);
 
     // Установка камеры на контролируемое
-    const auto t1 = game::reg.view<RenderScene>();
-    if (t1.begin() != t1.end()) {
-        const auto e = t1.front();
-        RenderScene rs = game::reg.get<RenderScene>(e);
-        Vector2u size = rs.rw->getSize();
-        sf::View view(sf::Vector2f(pos.x, pos.y), sf::Vector2f(size.x / 64.0f * 25, size.y / 64.0f * 25));
-        rs.rw->setView(view);
-    }
+    Vector2u size = game::rs.rw->getSize();
+    sf::View view_(sf::Vector2f(pos.x, pos.y), sf::Vector2f(size.x / 64.0f * 25, size.y / 64.0f * 25));
+    game::rs.rw->setView(view_);
 }

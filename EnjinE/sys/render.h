@@ -6,9 +6,9 @@
 class render
 {
 public:
-	static void frame(RenderScene& rs);
+	static void frame();
 private:
-	static void render_physics(RenderScene rs);
-	static void set_controllable_view(RenderScene rs);
+	static void render_physics();
+	static void set_controllable_view();
 };
 
