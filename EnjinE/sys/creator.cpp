@@ -74,8 +74,8 @@ entt::entity creator::makePlayer(b2Vec2 pos) {
 
 	// Создаем коллизию игрока
 	b2ShapeDef sdef = b2DefaultShapeDef();
-	// Задаем коллизии форму капсулы
 
+	// Задаем коллизии форму капсулы
 	b2Circle cir;
 	cir.center = b2Vec2_zero;
 	cir.radius = 18.0f;
@@ -84,6 +84,7 @@ entt::entity creator::makePlayer(b2Vec2 pos) {
 
 	SpriteComp sprite_c;
 	sprite_c.id = game::texmngr.getIDbyName(L"a-drone");
+	sprite_c.layer = 1;
 
 	game::reg.emplace<Player>(e);
 	game::reg.emplace<Controllable>(e);

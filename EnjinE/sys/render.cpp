@@ -67,14 +67,15 @@ void render::render_physics() {
 
         if (dist > ps.viewDist) continue;
 
-        sprites.push_back({ e, s.layer });
+        sprites.push_back( { e, s.layer } );
     }
 
     // Сортируем по возрастанию значения (Int8)
     std::sort(sprites.begin(), sprites.end(), [](const auto& a, const auto& b) {
-        return a.second > b.second; // Для убывания: `a.second > b.second`
+        return a.second < b.second; // Для убывания: `a.second > b.second`
     });
 
+    // Отрисовка спрайтов
     for (auto s : sprites) {
         auto e = s.first;
         SpriteComp sprite_c = game::reg.get<SpriteComp>(e);
@@ -86,8 +87,6 @@ void render::render_physics() {
         b2Rot rot = b2Body_GetRotation(bid);
         b2Vec2 vel = b2Body_GetLinearVelocity(bid);
 
-        float dbg_size = 0.0f;
-
         b2ShapeId shapeIds[1];
         b2Body_GetShapes(bid, shapeIds, 1);
 
@@ -96,7 +95,6 @@ void render::render_physics() {
         switch (shapetype) {
         case b2ShapeType::b2_circleShape:
             b2Circle cirle =  b2Shape_GetCircle(shapeIds[0]);
-            dbg_size = cirle.radius;
             break;
         }
 
@@ -109,13 +107,39 @@ void render::render_physics() {
 
         Sprite sprite;
         sprite.setTexture(*texture);
-        
         sprite.setPosition(pos);
         sprite.setRotation(angle);
         sprite.setOrigin(Vector2f(texture->getSize().x / 2.0f, texture->getSize().y / 2.0f));
         game::rs.rw->draw(sprite);
-
+    }
+    
+    // Отрисовка дебаг линий во вторую очередь поверх спрайтов
+    for (auto s : sprites) {
         if (game::rs.is_debug_physics) {
+            auto e = s.first;
+            SpriteComp sprite_c = game::reg.get<SpriteComp>(e);
+            b2BodyId bid = game::reg.get<b2BodyId>(e);
+
+            b2Vec2 b2pos = b2Body_GetPosition(bid);
+            Vector2f pos = Vector2f(b2pos.x, b2pos.y);
+
+            b2Rot rot = b2Body_GetRotation(bid);
+            b2Vec2 vel = b2Body_GetLinearVelocity(bid);
+
+            float dbg_size = 0.0f;
+
+            b2ShapeId shapeIds[1];
+            b2Body_GetShapes(bid, shapeIds, 1);
+
+            b2ShapeType shapetype = b2Shape_GetType(shapeIds[0]);
+
+            switch (shapetype) {
+            case b2ShapeType::b2_circleShape:
+                b2Circle cirle = b2Shape_GetCircle(shapeIds[0]);
+                dbg_size = cirle.radius;
+                break;
+            }
+
             // Рисуем бокс
             sf::Vertex line[] =
             {
@@ -130,6 +154,7 @@ void render::render_physics() {
             Text text_rotation = Text(std::format("r:\t{:.4f},s:{:.4f}", rot.c, rot.s), game::rs.mfont, 24);
             Text text_velocity = Text(std::format("vel:\t{:.4f},{:.4f}", vel.x, vel.y), game::rs.mfont, 24);
             Text text_n_textur = Text(std::format(L"tex:\t{}", game::texmngr.getNamebyID(sprite_c.id)), game::rs.mfont, 24);
+            Text text_layer = Text(std::format(L"ZL:\t{}", sprite_c.layer), game::rs.mfont, 24);
 
             const float text_scale = 0.2f;
             const Vector2f text_padding = Vector2f(2.5f, 0.0f);
@@ -137,6 +162,7 @@ void render::render_physics() {
             text_rotation.setScale(Vector2f(text_scale, text_scale));
             text_velocity.setScale(Vector2f(text_scale, text_scale));
             text_n_textur.setScale(Vector2f(text_scale, text_scale));
+            text_layer.setScale(Vector2f(text_scale, text_scale));
 
             pos += text_padding;
 
@@ -144,11 +170,13 @@ void render::render_physics() {
             text_rotation.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 5));
             text_velocity.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 10));
             text_n_textur.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 15));
+            text_layer.setPosition(Vector2f(pos.x + dbg_size, pos.y - dbg_size + 20));
 
             game::rs.rw->draw(text_position);
             game::rs.rw->draw(text_rotation);
             game::rs.rw->draw(text_velocity);
             game::rs.rw->draw(text_n_textur);
+            game::rs.rw->draw(text_layer);
         }
     }
 }
