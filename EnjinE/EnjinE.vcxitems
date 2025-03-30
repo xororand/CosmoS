@@ -17,9 +17,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\worlds\MainWorld.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\logics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\drons\space\ancient_drone_station.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)comp\drons\AI.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)comp\drons\space\AncientDrone.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)comp\drons\space\AncientDroneStation.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\AI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\drons\space\AncientDrone.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\drons\space\AncientDroneStation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\minerals\Asteroid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\Controllable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\minerals\Ore.h" />

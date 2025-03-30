@@ -8,10 +8,10 @@
 #include "comp/worlds/MainWorld.h"
 #include <comp/SpriteComp.h>
 #include <comp/Controllable.h>
-#include <comp/drons/AI.h>
+#include <comp/AI/AI.h>
 #include <comp/holders/OreHolder.h>
-#include <comp/drons/space/AncientDrone.h>
-#include <comp/drons/space/AncientDroneStation.h>
+#include <comp/AI/drons/space/AncientDrone.h>
+#include <comp/AI/drons/space/AncientDroneStation.h>
 
 // return null entt and destroy created
 entt::entity creator::retdes(entt::entity e)

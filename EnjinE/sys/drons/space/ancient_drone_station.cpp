@@ -4,7 +4,7 @@
 
 #include <entt/entity/registry.hpp>
 
-#include "comp/drons/space/AncientDroneStation.h"
+#include "comp/AI/drons/space/AncientDroneStation.h"
 
 void ancient_drone_station::tick()
 {
