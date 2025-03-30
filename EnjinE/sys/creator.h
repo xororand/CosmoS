@@ -19,16 +19,16 @@ public:
 	static void makeRenderScene();
 	static void makeTextureManager();
 
-	static void makeWorld();
+	static void makeMainWorld();
 
-	static entt::entity makePlayer(b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makePlayer(entt::entity world, b2Vec2 pos = b2Vec2_zero);
 
-	static entt::entity makeAncientMiningDrone(entt::entity station = entt::null, b2Vec2 pos = b2Vec2_zero);
-	static entt::entity makeAncientMiningDroneStation(b2Vec2 pos = b2Vec2_zero);
-	static entt::entity makeAsteroid(Ore::OreType = Ore::STONE, b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makeAncientMiningDrone(entt::entity world, entt::entity station = entt::null, b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makeAncientMiningDroneStation(entt::entity world, b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makeAsteroid(entt::entity world, Ore::OreType = Ore::STONE, b2Vec2 pos = b2Vec2_zero);
 
 	// ¬озвращает ентити основной базы дронов
-	static entt::entity makeComposition_MiningAntientDrones(b2Vec2 pos = b2Vec2_zero);
+	static entt::entity makeComposition_MiningAntientDrones(entt::entity world, b2Vec2 pos = b2Vec2_zero);
 
 };
 

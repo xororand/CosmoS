@@ -6,29 +6,26 @@
 #include "box2d/box2d.h"
 #include "SFML/Graphics.hpp"
 
-#include "comp/World.h"
+#include "comp/worlds/World.h"
 #include "comp/Controllable.h"
 #include <comp/RenderScene.h>
 
 void physics::step() {
-	stepWorld();
+	stepWorlds();
 	stepBodys();
 }
 
-void physics::stepWorld()
-{
-	// »щем первый попавшийс€ мир
+void physics::stepWorlds() {
 	const auto view = game::reg.view<World, b2WorldId>();
-	if (view.begin() == view.end()) return;
+	for (const auto e : view) {
+		World world = view.get<World>(e);
+		b2WorldId wid = view.get<b2WorldId>(e);
 
-	World world = view.get<World>(view.front());
-	b2WorldId wid = view.get<b2WorldId>(view.front());
-	
-	b2World_Step(wid, world.timeStep, world.SubStepCount);
+		b2World_Step(wid, world.timeStep, world.SubStepCount);
+	}
 }
 
-void physics::stepBodys()
-{
+void physics::stepBodys() {
 	const auto view = game::reg.view<b2BodyId>();
 	for (const auto e : view) {
 		b2Vec2 vdelta = b2Vec2_zero;

@@ -7,7 +7,7 @@ public:
 	static void step();
 
 private:
-	static void stepWorld();
+	static void stepWorlds();
 	static void stepBodys();
 };
 

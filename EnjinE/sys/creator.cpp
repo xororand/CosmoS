@@ -4,7 +4,8 @@
 #include "SFML/Graphics.hpp"
 
 #include "comp/Player.h"
-#include "comp/World.h"
+#include "comp/worlds/World.h"
+#include "comp/worlds/MainWorld.h"
 #include <comp/SpriteComp.h>
 #include <comp/Controllable.h>
 #include <comp/drons/AI.h>
@@ -24,6 +25,7 @@ void creator::makeRenderScene() {
 
 	RenderWindow* rw = new RenderWindow(sf::VideoMode({ 1280, 800 }), "CosmoS");
 	rw->setFramerateLimit(60);
+	rw->setVerticalSyncEnabled(true);
 	game::rs.rw = rw;
 	
 	if (!game::rs.mfont.loadFromFile("Resources\\fonts\\Hardpixel-nn51.otf"))
@@ -41,7 +43,7 @@ void creator::makeTextureManager() {
 	game::texmngr.loadTexturesFromRootResources();
 }
 
-void creator::makeWorld() {
+void creator::makeMainWorld() {
 	const auto e = game::reg.create();
 	
 	World world;
@@ -54,14 +56,17 @@ void creator::makeWorld() {
 	b2WorldId wid = b2CreateWorld(&wdef);
 	
 	game::reg.emplace<World>(e, world);
+	game::reg.emplace<MainWorld>(e, world);
 	game::reg.emplace<b2WorldId>(e, wid);
+
+	creator::makePlayer(e);
+	creator::makeComposition_MiningAntientDrones(e, b2Vec2(64.0f, 0.0f));
+
 }
 
-entt::entity creator::makePlayer(b2Vec2 pos) {
+entt::entity creator::makePlayer(entt::entity world, b2Vec2 pos) {
 	// »щем первый попавшийс€ мир
-	const auto view = game::reg.view<World, b2WorldId>();
-	if (view.begin() == view.end()) return entt::null;
-	b2WorldId wid = view.get<b2WorldId>(view.front());
+	b2WorldId wid = game::reg.get<b2WorldId>(world);
 
 	const auto e = game::reg.create();
 
@@ -94,11 +99,8 @@ entt::entity creator::makePlayer(b2Vec2 pos) {
 	return e;
 }
 
-entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
-	// »щем первый попавшийс€ мир
-	const auto view = game::reg.view<World, b2WorldId>();
-	if (view.begin() == view.end()) return entt::null;
-	b2WorldId wid = view.get<b2WorldId>(view.front());
+entt::entity creator::makeAncientMiningDrone(entt::entity world, entt::entity station, b2Vec2 pos) {
+	b2WorldId wid = game::reg.get<b2WorldId>(world);
 
 	const auto e = game::reg.create();
 
@@ -137,11 +139,9 @@ entt::entity creator::makeAncientMiningDrone(entt::entity station, b2Vec2 pos) {
 
 	return e;
 }
-entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
+entt::entity creator::makeAncientMiningDroneStation(entt::entity world, b2Vec2 pos) {
 	// »щем первый попавшийс€ мир
-	const auto view = game::reg.view<World, b2WorldId>();
-	if (view.begin() == view.end()) return entt::null;
-	b2WorldId wid = view.get<b2WorldId>(view.front());
+	b2WorldId wid = game::reg.get<b2WorldId>(world);
 
 	const auto e = game::reg.create();
 
@@ -187,12 +187,8 @@ entt::entity creator::makeAncientMiningDroneStation(b2Vec2 pos) {
 	game::reg.emplace<b2BodyId>(e, bid);
 	return e;
 }
-entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
-{
-	// »щем первый попавшийс€ мир
-	const auto view = game::reg.view<World, b2WorldId>();
-	if (view.begin() == view.end()) return entt::null;
-	b2WorldId wid = view.get<b2WorldId>(view.front());
+entt::entity creator::makeAsteroid(entt::entity world, Ore::OreType type, b2Vec2 pos) {
+	b2WorldId wid = game::reg.get<b2WorldId>(world);
 
 	const auto e = game::reg.create();
 
@@ -250,8 +246,8 @@ entt::entity creator::makeAsteroid(Ore::OreType type, b2Vec2 pos)
 }
 
 //  ќћѕќ«»÷»»
-entt::entity creator::makeComposition_MiningAntientDrones(b2Vec2 pos) {
-	entt::entity ds_e = makeAncientMiningDroneStation(pos);
+entt::entity creator::makeComposition_MiningAntientDrones(entt::entity world, b2Vec2 pos) {
+	entt::entity ds_e = makeAncientMiningDroneStation(world, pos);
 	if (ds_e == entt::null) return entt::null;
 
 	AncientDroneStation* station = &game::reg.get<AncientDroneStation>(ds_e);
@@ -261,13 +257,13 @@ entt::entity creator::makeComposition_MiningAntientDrones(b2Vec2 pos) {
 
 	// спавним дронов
 	for (int i = 0; i < dronc; i++) {
-		const auto e = makeAncientMiningDrone(ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		const auto e = makeAncientMiningDrone(world, ds_e, pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
 		station->drones.push_back(e);
 	}
 
 	// спавним астероиды
 	for (int i = 0; i < asterc; i++) {
-		const auto e = makeAsteroid(Ore::getRand(), pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
+		const auto e = makeAsteroid(world, Ore::getRand(), pos + b2Vec2(rand() % 256 - 128, rand() % 256 - 128));
 		//station->drones.push_back(e);
 	}
 

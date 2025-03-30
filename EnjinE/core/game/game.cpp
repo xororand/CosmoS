@@ -22,16 +22,10 @@ int game::run()
     creator::makeRenderScene();
     creator::makeTextureManager();
 
-    creator::makeWorld();
-
-    creator::makePlayer();
-
-    creator::makeComposition_MiningAntientDrones(b2Vec2(64.0f, 0.0f));
+    creator::makeMainWorld();
     
     // Главный цикл
-    rs.rw->setVerticalSyncEnabled(true);
-
-    while (rs.rw->isOpen()) {
+    while ( rs.rw->isOpen() ) {
         gui_events::step(rs.rw);
         input_controller::step();
 
@@ -40,6 +34,6 @@ int game::run()
 
         render::frame();
     }
-
+    
     return 0;
 }
