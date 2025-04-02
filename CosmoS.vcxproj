@@ -151,9 +151,32 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EnjinE\comp\Controllable.h" />
+    <ClInclude Include="EnjinE\comp\Player.h" />
+    <ClInclude Include="EnjinE\comp\RenderScene.h" />
+    <ClInclude Include="EnjinE\comp\SpriteComp.h" />
+    <ClInclude Include="EnjinE\comp\TextureManager.h" />
+    <ClInclude Include="EnjinE\core\defines.h" />
+    <ClInclude Include="EnjinE\core\game\game.h" />
+    <ClInclude Include="EnjinE\core\includes.h" />
+    <ClInclude Include="EnjinE\sys\creator.h" />
+    <ClInclude Include="EnjinE\sys\events.h" />
+    <ClInclude Include="EnjinE\sys\input_controller.h" />
+    <ClInclude Include="EnjinE\sys\logics.h" />
+    <ClInclude Include="EnjinE\sys\physics.h" />
+    <ClInclude Include="EnjinE\sys\render.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ENJINE\CHUNKSYSTEM.CPP" />
+    <ClCompile Include="EnjinE\comp\TextureManager.cpp" />
+    <ClCompile Include="EnjinE\core\game\game.cpp" />
+    <ClCompile Include="EnjinE\sys\creator.cpp" />
+    <ClCompile Include="EnjinE\sys\events.cpp" />
+    <ClCompile Include="EnjinE\sys\input_controller.cpp" />
+    <ClCompile Include="EnjinE\sys\logics.cpp" />
+    <ClCompile Include="EnjinE\sys\physics.cpp" />
+    <ClCompile Include="EnjinE\sys\render.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -9,21 +9,26 @@
 #include <comp/Controllable.h>
 
 #include "utils/vmath.h"
+#include <comp/worlds/ChunkMember.h>
 
 void render::frame() {
     ImGui::SFML::Update(*game::rs.rw, game::rs.deltaClock.restart());
 
     if (ImGui::Begin("Debug")) {
-        const auto p = game::reg.view<Player, b2BodyId>();
+        const auto p = game::reg.view<Player, b2BodyId, ChunkMember>();
         if (p.begin() != p.end()) {
             b2BodyId bid = game::reg.get<b2BodyId>(p.front());
             b2Vec2  pos = b2Body_GetPosition(bid);
             b2Vec2  vel = b2Body_GetLinearVelocity(bid);
             b2Rot   rot = b2Body_GetRotation(bid);
+
+            ChunkMember cm = game::reg.get<ChunkMember>(p.front());
+
             ImGui::Text("Player DEBUG:");
             ImGui::Text(std::format("Posisiton:\tx:{:.4f}, y:{:.4f}", pos.x, pos.y).c_str());
             ImGui::Text(std::format("Velocity:\tx:{:.4f}, y:{:.4f}", vel.x, vel.y).c_str());
             ImGui::Text(std::format("Rotation:\tcos:{:.4f}, sin:{:.4f}", rot.c, rot.s).c_str());
+            ImGui::Text(std::format("ChunkPos:\tx:{}, y:{}", cm.coord.x, cm.coord.y).c_str());
         }
 
         const auto c = game::reg.view<Controllable>();

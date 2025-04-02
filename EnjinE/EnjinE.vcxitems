@@ -14,9 +14,14 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)core\ChunkSystem\ChunkSystem.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\worlds\ChunkCoord.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\worlds\ChunkData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\worlds\ChunkMember.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sys\drons\space\AncientDroneSystem.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)comp\object\Static.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\worlds\MainWorld.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sys\logics.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)sys\drons\space\ancient_drone_station.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\AI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\drons\space\AncientDrone.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)comp\AI\drons\space\AncientDroneStation.h" />
@@ -43,8 +48,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\vmath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)core\ChunkSystem\ChunkSystem.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sys\drons\space\AncientDroneSystem.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\logics.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)sys\drons\space\ancient_drone_station.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)comp\TextureManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)core\game\game.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sys\input_controller.cpp" />

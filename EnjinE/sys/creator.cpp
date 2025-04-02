@@ -12,6 +12,7 @@
 #include <comp/holders/OreHolder.h>
 #include <comp/AI/drons/space/AncientDrone.h>
 #include <comp/AI/drons/space/AncientDroneStation.h>
+#include <comp/worlds/ChunkMember.h>
 
 // return null entt and destroy created
 entt::entity creator::retdes(entt::entity e)
@@ -54,14 +55,13 @@ void creator::makeMainWorld() {
 	wdef.gravity = b2Vec2_zero;
 	wdef.enableSleep = true;
 	b2WorldId wid = b2CreateWorld(&wdef);
-	
+
 	game::reg.emplace<World>(e, world);
 	game::reg.emplace<MainWorld>(e, world);
 	game::reg.emplace<b2WorldId>(e, wid);
 
 	creator::makePlayer(e);
 	creator::makeComposition_MiningAntientDrones(e, b2Vec2(64.0f, 0.0f));
-
 }
 
 entt::entity creator::makePlayer(entt::entity world, b2Vec2 pos) {
@@ -92,6 +92,7 @@ entt::entity creator::makePlayer(entt::entity world, b2Vec2 pos) {
 	sprite_c.layer = 1;
 
 	game::reg.emplace<Player>(e);
+	game::reg.emplace<ChunkMember>(e);
 	game::reg.emplace<Controllable>(e);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -127,12 +128,13 @@ entt::entity creator::makeAncientMiningDrone(entt::entity world, entt::entity st
 	sprite_c.id = id;
 	sprite_c.layer = 1;
 
-	AncientMiningDrone amd;
-	amd.station = station;
+	AncientDrone ad;
+	ad.station = station;
 
 	game::reg.emplace<AI>(e);
-	game::reg.emplace<AncientDrone>(e);
-	game::reg.emplace<AncientMiningDrone>(e, amd);
+	game::reg.emplace<AncientDrone>(e, ad);
+	game::reg.emplace<AncientMiningDrone>(e);
+	game::reg.emplace<ChunkMember>(e);
 	game::reg.emplace<OreHolder>(e);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -182,6 +184,7 @@ entt::entity creator::makeAncientMiningDroneStation(entt::entity world, b2Vec2 p
 	b2Body_SetMassData(bid, mass_data);
 
 	game::reg.emplace<AncientDroneStation>(e);
+	game::reg.emplace<ChunkMember>(e);
 	game::reg.emplace<OreHolder>(e, ore_h);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -239,6 +242,7 @@ entt::entity creator::makeAsteroid(entt::entity world, Ore::OreType type, b2Vec2
 	b2Body_SetMassData(bid, mass_data);
 
 	game::reg.emplace<Asteroid>(e, aster);
+	game::reg.emplace<ChunkMember>(e);
 	game::reg.emplace<OreHolder>(e, ore_h);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);

@@ -9,6 +9,7 @@
 #include "comp/worlds/World.h"
 #include "comp/Controllable.h"
 #include <comp/RenderScene.h>
+#include <comp/worlds/ChunkMember.h>
 
 void physics::step() {
 	stepWorlds();
@@ -26,11 +27,14 @@ void physics::stepWorlds() {
 }
 
 void physics::stepBodys() {
-	const auto view = game::reg.view<b2BodyId>();
+	const auto view = game::reg.view<b2BodyId, ChunkMember>();
 	for (const auto e : view) {
+		ChunkMember& cm = view.get<ChunkMember>(e);
+
 		b2Vec2 vdelta = b2Vec2_zero;
 		b2BodyId bid = view.get<b2BodyId>(e);
-
+		b2Vec2 pos = b2Body_GetPosition(bid);
+		
 		if (auto ctrla = game::reg.try_get<Controllable>(e); ctrla) {
 			const float speed = 10000.0f;
 			if (ctrla->w) vdelta.y -= 1.0f * speed;

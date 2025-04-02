@@ -4,13 +4,17 @@
 
 #include "comp/TextureManager.h"
 #include "comp/RenderScene.h"
+#include "core/ChunkSystem/ChunkSystem.h"
 
 class game
 {
+
 public:
-	static inline entt::registry reg;
-	static inline TextureManager texmngr;
-	static inline RenderScene    rs;
+	static inline entt::registry	reg;
+	static inline TextureManager	texmngr;
+	static inline RenderScene		rs;
+	static inline ChunkSystem		cs;
+
 	game();
 	~game();
 

@@ -28,6 +28,8 @@ int game::run()
     while ( rs.rw->isOpen() ) {
         gui_events::step(rs.rw);
         input_controller::step();
+        
+        ChunkSystem::update_chunk_members();
 
         physics::step();
         logics::step();
