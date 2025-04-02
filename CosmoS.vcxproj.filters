@@ -93,8 +93,5 @@
     <ClCompile Include="EnjinE\comp\TextureManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ENJINE\CHUNKSYSTEM.CPP">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

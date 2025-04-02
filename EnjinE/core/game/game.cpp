@@ -31,6 +31,8 @@ int game::run()
         
         ChunkSystem::update_chunk_members();
 
+        ChunkSystem::get_chunk_near_objects({ 0, 1 }, 2);
+
         physics::step();
         logics::step();
 

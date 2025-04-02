@@ -168,7 +168,6 @@
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ENJINE\CHUNKSYSTEM.CPP" />
     <ClCompile Include="EnjinE\comp\TextureManager.cpp" />
     <ClCompile Include="EnjinE\core\game\game.cpp" />
     <ClCompile Include="EnjinE\sys\creator.cpp" />

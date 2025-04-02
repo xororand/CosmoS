@@ -2,6 +2,22 @@
 #include <core/game/game.h>
 #include <comp/worlds/ChunkMember.h>
 
+std::vector<entt::entity> ChunkSystem::get_chunk_near_objects(ChunkCoord cc, int radius)
+{
+	std::vector<entt::entity> objs;
+
+	for (int dx = -radius; dx <= radius; ++dx) {
+		for (int dy = -radius; dy <= radius; ++dy) {
+			ChunkCoord search_coord{ cc.x + dx, cc.y + dy };
+
+			for (auto o : game::cs.chunks[search_coord].objects)
+				objs.push_back(o);
+		}
+	}
+
+	return objs;
+}
+
 void ChunkSystem::update_chunk_members()
 {
 	const auto view = game::reg.view<b2BodyId, ChunkMember>();
