@@ -17,6 +17,6 @@ void logics::stepWorlds() {
 		b2WorldId wid = view.get<b2WorldId>(e);
 		ChunkSystem& cs = view.get<ChunkSystem>(e);
 
-		cs.update_chunk_members();
+		cs.update_chunk_members(wid);
 	}
 }

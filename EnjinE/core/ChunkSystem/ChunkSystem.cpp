@@ -31,11 +31,13 @@ std::vector<entt::entity> ChunkSystem::get_chunk_objects(ChunkCoord cc)
 	return chunks[cc].objects;
 }
 
-void ChunkSystem::update_chunk_members()
+void ChunkSystem::update_chunk_members(b2WorldId wid)
 {
 	const auto view = game::reg.view<b2BodyId, ChunkMember>();
 	for (const auto e : view) {
 		ChunkMember& cm = view.get<ChunkMember>(e);
+		if (cm.wid.index1 != wid.index1 || cm.wid.revision != wid.revision) continue;
+
 		b2BodyId bid = view.get<b2BodyId>(e);
 		b2Vec2 pos = b2Body_GetPosition(bid);
 

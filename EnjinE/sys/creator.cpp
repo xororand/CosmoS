@@ -46,7 +46,7 @@ void creator::makeTextureManager() {
 }
 
 void creator::makeMainWorld() {
-	const auto e = game::reg.create();
+	const auto world_e = game::reg.create();
 	
 	World world;
 	world.timeStep = 1.0f / 60.0f;
@@ -59,17 +59,16 @@ void creator::makeMainWorld() {
 
 	ChunkSystem cs = ChunkSystem();
 
-	game::reg.emplace<World>(e, world);
-	game::reg.emplace<MainWorld>(e, world);
-	game::reg.emplace<b2WorldId>(e, wid);
-	game::reg.emplace<ChunkSystem>(e, cs);
+	game::reg.emplace<World>(world_e, world);
+	game::reg.emplace<MainWorld>(world_e, world);
+	game::reg.emplace<b2WorldId>(world_e, wid);
+	game::reg.emplace<ChunkSystem>(world_e, cs);
 
-	creator::makePlayer(e);
-	creator::makeComposition_MiningAntientDrones(e, b2Vec2(64.0f, 0.0f));
+	creator::makePlayer(world_e);
+	creator::makeComposition_MiningAntientDrones(world_e, b2Vec2(64.0f, 0.0f));
 }
 
 entt::entity creator::makePlayer(entt::entity world, b2Vec2 pos) {
-	// »щем первый попавшийс€ мир
 	b2WorldId wid = game::reg.get<b2WorldId>(world);
 
 	const auto e = game::reg.create();
@@ -95,8 +94,11 @@ entt::entity creator::makePlayer(entt::entity world, b2Vec2 pos) {
 	sprite_c.id = game::texmngr.getIDbyName(L"a-drone");
 	sprite_c.layer = 1;
 
+	ChunkMember cm = ChunkMember();
+	cm.wid = wid;
+
 	game::reg.emplace<Player>(e);
-	game::reg.emplace<ChunkMember>(e);
+	game::reg.emplace<ChunkMember>(e, cm);
 	game::reg.emplace<Controllable>(e);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -135,10 +137,13 @@ entt::entity creator::makeAncientMiningDrone(entt::entity world, entt::entity st
 	AncientDrone ad;
 	ad.station = station;
 
+	ChunkMember cm = ChunkMember();
+	cm.wid = wid;
+
 	game::reg.emplace<AI>(e);
 	game::reg.emplace<AncientDrone>(e, ad);
 	game::reg.emplace<AncientMiningDrone>(e);
-	game::reg.emplace<ChunkMember>(e);
+	game::reg.emplace<ChunkMember>(e, cm);
 	game::reg.emplace<OreHolder>(e);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -187,8 +192,11 @@ entt::entity creator::makeAncientMiningDroneStation(entt::entity world, b2Vec2 p
 
 	b2Body_SetMassData(bid, mass_data);
 
+	ChunkMember cm = ChunkMember();
+	cm.wid = wid;
+
 	game::reg.emplace<AncientDroneStation>(e);
-	game::reg.emplace<ChunkMember>(e);
+	game::reg.emplace<ChunkMember>(e, cm);
 	game::reg.emplace<OreHolder>(e, ore_h);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);
@@ -245,8 +253,11 @@ entt::entity creator::makeAsteroid(entt::entity world, Ore::OreType type, b2Vec2
 
 	b2Body_SetMassData(bid, mass_data);
 
+	ChunkMember cm = ChunkMember();
+	cm.wid = wid;
+
 	game::reg.emplace<Asteroid>(e, aster);
-	game::reg.emplace<ChunkMember>(e);
+	game::reg.emplace<ChunkMember>(e, cm);
 	game::reg.emplace<OreHolder>(e, ore_h);
 	game::reg.emplace<SpriteComp>(e, sprite_c);
 	game::reg.emplace<b2BodyId>(e, bid);

@@ -15,5 +15,5 @@ public:
 	std::vector<entt::entity> get_chunk_near_objects(ChunkCoord cc, int radius = 1);
 	std::vector<entt::entity> get_chunk_objects(ChunkCoord cc);
 
-	void update_chunk_members();
+	void update_chunk_members(b2WorldId wid);
 };
