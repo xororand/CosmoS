@@ -13,6 +13,7 @@
 #include <comp/AI/drons/space/AncientDrone.h>
 #include <comp/AI/drons/space/AncientDroneStation.h>
 #include <comp/worlds/ChunkMember.h>
+#include <core/ChunkSystem/ChunkSystem.h>
 
 // return null entt and destroy created
 entt::entity creator::retdes(entt::entity e)
@@ -56,9 +57,12 @@ void creator::makeMainWorld() {
 	wdef.enableSleep = true;
 	b2WorldId wid = b2CreateWorld(&wdef);
 
+	ChunkSystem cs = ChunkSystem();
+
 	game::reg.emplace<World>(e, world);
 	game::reg.emplace<MainWorld>(e, world);
 	game::reg.emplace<b2WorldId>(e, wid);
+	game::reg.emplace<ChunkSystem>(e, cs);
 
 	creator::makePlayer(e);
 	creator::makeComposition_MiningAntientDrones(e, b2Vec2(64.0f, 0.0f));

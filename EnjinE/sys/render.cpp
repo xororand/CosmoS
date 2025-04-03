@@ -10,6 +10,9 @@
 
 #include "utils/vmath.h"
 #include <comp/worlds/ChunkMember.h>
+#include <comp/worlds/World.h>
+#include <comp/worlds/MainWorld.h>
+#include <core/ChunkSystem/ChunkSystem.h>
 
 void render::frame() {
     ImGui::SFML::Update(*game::rs.rw, game::rs.deltaClock.restart());
@@ -38,6 +41,22 @@ void render::frame() {
         }
 
         ImGui::Checkbox("Debug physics", &game::rs.is_debug_physics);
+
+        if (ImGui::BeginListBox("Chunks")) {
+            const auto c = game::reg.view<World, MainWorld>();
+            auto e = c.front();
+
+            if (e != entt::null) {
+                auto cs = game::reg.get<ChunkSystem>(e);
+                for (auto chunk : cs.chunks) {
+                    if (ImGui::Selectable(
+                        std::format("X:{}\t Y:{}", chunk.first.x, chunk.first.y).c_str(),
+                        false)) {
+                    }
+                }
+            }
+            ImGui::EndListBox();
+        }
 
         ImGui::End();
     }

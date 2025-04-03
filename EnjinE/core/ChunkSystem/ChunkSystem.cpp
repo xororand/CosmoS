@@ -2,6 +2,14 @@
 #include <core/game/game.h>
 #include <comp/worlds/ChunkMember.h>
 
+ChunkCoord ChunkSystem::get_chunk_coords(b2Vec2 pos)
+{
+	return {
+		static_cast<int>(std::floor(pos.x / CHUNK_SIZE)),
+		static_cast<int>(std::floor(pos.y / CHUNK_SIZE)) // Для 2D
+	};
+}
+
 std::vector<entt::entity> ChunkSystem::get_chunk_near_objects(ChunkCoord cc, int radius)
 {
 	std::vector<entt::entity> objs;
@@ -10,12 +18,17 @@ std::vector<entt::entity> ChunkSystem::get_chunk_near_objects(ChunkCoord cc, int
 		for (int dy = -radius; dy <= radius; ++dy) {
 			ChunkCoord search_coord{ cc.x + dx, cc.y + dy };
 
-			for (auto o : game::cs.chunks[search_coord].objects)
+			for (auto o : chunks[search_coord].objects)
 				objs.push_back(o);
 		}
 	}
 
 	return objs;
+}
+
+std::vector<entt::entity> ChunkSystem::get_chunk_objects(ChunkCoord cc)
+{
+	return chunks[cc].objects;
 }
 
 void ChunkSystem::update_chunk_members()
@@ -31,15 +44,17 @@ void ChunkSystem::update_chunk_members()
 		// Если мы по расчетам не в том чанке где были раньше -> выполняем условие
 		if (cm.coord != cc) {
 			// Добавляем в новом чанке наш объект
-			game::cs.chunks[cc].objects.push_back(e);
+			this->chunks[cc].objects.push_back(e);
+
 			// Удаляем со старого чанка наш объект
-			game::cs.chunks[cm.coord].objects.erase(
+			this->chunks[cm.coord].objects.erase(
 				std::remove(
-					game::cs.chunks[cm.coord].objects.begin(),
-					game::cs.chunks[cm.coord].objects.end(),
+					this->chunks[cm.coord].objects.begin(),
+					this->chunks[cm.coord].objects.end(),
 					e),
-				game::cs.chunks[cm.coord].objects.end()
+				this->chunks[cm.coord].objects.end()
 			);
+
 			// Обновляем у нашего Ентити координату чанка
 			cm.coord = cc;
 		}

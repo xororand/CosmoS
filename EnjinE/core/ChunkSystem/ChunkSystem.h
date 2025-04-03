@@ -6,18 +6,14 @@
 
 class ChunkSystem
 {
+private:
+	static constexpr int CHUNK_SIZE = 100;
 public:
-	static constexpr int CHUNK_SIZE = 512;
-	static ChunkCoord get_chunk_coords(b2Vec2 pos) {
-		return {
-			static_cast<int>(std::floor(pos.x / CHUNK_SIZE)),
-			static_cast<int>(std::floor(pos.y / CHUNK_SIZE)) // Äëÿ 2D
-		};
-	}
-	static std::vector<entt::entity> get_chunk_near_objects(ChunkCoord cc, int radius = 1);
-
 	std::unordered_map<ChunkCoord, ChunkData> chunks;
+public:
+	static ChunkCoord get_chunk_coords(b2Vec2 pos);
+	std::vector<entt::entity> get_chunk_near_objects(ChunkCoord cc, int radius = 1);
+	std::vector<entt::entity> get_chunk_objects(ChunkCoord cc);
 
-	static void update_chunk_members();
+	void update_chunk_members();
 };
-

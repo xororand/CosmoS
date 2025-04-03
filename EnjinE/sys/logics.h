@@ -5,5 +5,7 @@ class logics
 {
 public:
 	static void step();
+private:
+	static void stepWorlds();
 };
 

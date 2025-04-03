@@ -27,10 +27,8 @@ void physics::stepWorlds() {
 }
 
 void physics::stepBodys() {
-	const auto view = game::reg.view<b2BodyId, ChunkMember>();
+	const auto view = game::reg.view<b2BodyId>();
 	for (const auto e : view) {
-		ChunkMember& cm = view.get<ChunkMember>(e);
-
 		b2Vec2 vdelta = b2Vec2_zero;
 		b2BodyId bid = view.get<b2BodyId>(e);
 		b2Vec2 pos = b2Body_GetPosition(bid);
